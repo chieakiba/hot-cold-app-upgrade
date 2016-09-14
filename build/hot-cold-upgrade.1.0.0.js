@@ -50,11 +50,6 @@
 	var ReactDOM = __webpack_require__(34);
 	var connect = __webpack_require__(172).connect;
 	
-	var randomNumber = __webpack_require__(196);
-	var userGuess = __webpack_require__(197);
-	var feedback = __webpack_require__(198);
-	var playAgain = __webpack_require__(199);
-	
 	//Need the following components
 	
 	//Generate random number - in randomNumber.js
@@ -64,22 +59,34 @@
 	//If the user guesses the right number, tell them that they guessed the right number
 	//Show and enable the play again button so the user can play the game again
 	
-	var Game = React.createClass({
-	  displayName: 'Game',
-	
-	  render: function render() {
-	    return React.createElement(
-	      'div',
-	      null,
-	      'hi there... I'
-	    );
-	  }
-	
-	});
-	
-	document.addEventListener('DOMContentLoaded', function () {
-	  ReactDOM.render(React.createElement(Game, null), document.getElementById('game'));
-	});
+	// var Game = React.createClass({
+	//   render: function() {
+	//     return (
+	//       <section class="game"> <!-- Guessing Section -->
+	//
+	//         <h2 id="feedback">{blablah}!</h2>
+	//
+	//         <form>
+	//           <input type="text" name="userGuess" id="userGuess" class="text" maxlength="3" autocomplete="off" placeholder="Enter your Guess" required/>
+	//               <input type="submit" id="guessButton" class="button" name="submit" value="Guess"/>
+	//         </form>
+	//
+	//             <p>Guess #<span id="count">{counter}</span>!</p>
+	//
+	//         <ul id="guessList" class="guessBox clearfix">
+	//           { guesses }
+	//         </ul>
+	//
+	//       </section>
+	//
+	//     )
+	//   }
+	//
+	// });
+	//
+	// document.addEventListener('DOMContentLoaded', function() {
+	//   ReactDOM.render(<Game />, document.getElementById('game'));
+	// });
 
 /***/ },
 /* 1 */
@@ -23054,168 +23061,6 @@
 	module.exports = invariant;
 	
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
-
-/***/ },
-/* 196 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	// var React = require('react');
-	// var randomNumber = React.createClass({
-	//   render: function() {
-	//     //generate random number
-	//     var randomNumber;
-	//     var generateRandomNumber = function() {
-	//         randomNumber = Math.floor(Math.random() * 100) + 1;
-	//     };
-	//     return (
-	//       generateRandomNumber();
-	//     );
-	//   }
-	// });
-	var randomNumber = Math.floor(Math.random() * 100);
-	module.exports = randomNumber;
-
-/***/ },
-/* 197 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	
-	var userGuess = React.createClass({
-	  displayName: 'userGuess',
-	
-	  render: function render() {
-	    var guess;
-	    var newList;
-	    var listOfGuess = function listOfGuess() {
-	      guess = $('#userGuess').val();
-	      newList = $('#guessList').append('<li>' + guess + '</li>');
-	      $('#userGuess').val('');
-	    };
-	    return React.createElement(
-	      'div',
-	      null,
-	      newList
-	    );
-	  }
-	});
-	
-	module.exports = userGuess;
-
-/***/ },
-/* 198 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var randomNumber = __webpack_require__(196).randomNumber;
-	var userGuess = __webpack_require__(197);
-	
-	var correctAnswerDifference = Math.abs(randomNumber - 2);
-	var initialGameState = [];
-	
-	var feedback = function feedback(state, action) {
-	  state = state || initialGameState;
-	  //give feedback if userGues is correct
-	  if (action.type === actions.USER_GUESS) {
-	    return React.createElement(
-	      'div',
-	      null,
-	      '\'Correct! Click "New Game" to play again!\''
-	    );
-	  }
-	  //if user guess is close to the correct number
-	  else if (action.type === actions.CLOSE_GUESS) {
-	      return React.createElement(
-	        'div',
-	        null,
-	        'Warmer'
-	      );
-	    }
-	    //if user guess is really close to the correct number
-	    else if (action.type === actions.REALLY_CLOSE_GUESS) {
-	        return React.createElement(
-	          'div',
-	          null,
-	          'Hot!'
-	        );
-	      }
-	      //if user guess is far to the correct number
-	      else if (action.type === actions.FAR_GUESS) {
-	          return React.createElement(
-	            'div',
-	            null,
-	            'Cold'
-	          );
-	        }
-	};
-	
-	var feedback = React.createClass({
-	  displayName: 'feedback',
-	
-	  render: function render() {
-	    var correctAnswerDifference = Math.abs(randomNumber - guess);
-	    //give feedback if userGuess is correct
-	    if (guess == randomNumber) {
-	      $('#feedback').text('Correct! Click "New Game" to play again.');
-	    }
-	    //give feedback if userGuess is close to the correct number
-	    else if (correctAnswerDifference <= 10 && correctAnswerDifference >= 1) {
-	        $('#feedback').text("Hot!");
-	      }
-	      //give feedback if userGuess is getting closer to the correct number
-	      else if (correctAnswerDifference <= 20 && correctAnswerDifference >= 11) {
-	          $('#feedback').text("Warmer");
-	        }
-	        //give feedback if userGuess is farther from the correct number
-	        else if (correctAnswerDifference <= 30 && correctAnswerDifference >= 21) {
-	            $('#feedback').text("Cold");
-	          }
-	          //check if the user entered a number between 1 and 100
-	          else if (guess < 1 || guess > 100) {
-	              alert("Please enter a number between 1 and 100.");
-	              invalidEntry();
-	            }
-	            //check for an invalid input
-	            else if (!parseInt(guess)) {
-	                alert("Please enter a number.");
-	                invalidEntry();
-	              }
-	              //check that the number is a whole number
-	              else if (Math.round(guess) != guess) {
-	                  alert("Please enter a whole number.");
-	                  invalidEntry();
-	                }
-	                //give feedback if userGuess is far from the correct number
-	                else {
-	                    $('#feedback').text("Very Cold");
-	                  }
-	  }
-	});
-	
-	module.exports = feedback;
-
-/***/ },
-/* 199 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	
-	//enable new game to start when the user clicks on .new for New Game
-	$('.new').click(function () {
-	    $('#count').text(0);
-	    $('#guessList').empty();
-	    $('#feedback').text('Make your Guess!');
-	});
-	
-	module.exports = playAgain;
 
 /***/ }
 /******/ ]);

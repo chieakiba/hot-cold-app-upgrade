@@ -2,10 +2,7 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var connect = require('react-redux').connect;
 
-var randomNumber = require('./src/randomNumber');
-var userGuess = require('./src/userGuess');
-var feedback = require('./src/feedback');
-var playAgain = require('./src/playAgain');
+
 
 //Need the following components
 
@@ -16,15 +13,31 @@ var playAgain = require('./src/playAgain');
 //If the user guesses the right number, tell them that they guessed the right number
 //Show and enable the play again button so the user can play the game again
 
-var Game = React.createClass({
-  render: function() {
-    return (
-      <div>hi there... I</div>
-    )
-  }
-
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-  ReactDOM.render(<Game />, document.getElementById('game'));
-});
+// var Game = React.createClass({
+//   render: function() {
+//     return (
+//       <section class="game"> <!-- Guessing Section -->
+//
+//         <h2 id="feedback">{blablah}!</h2>
+//
+//         <form>
+//           <input type="text" name="userGuess" id="userGuess" class="text" maxlength="3" autocomplete="off" placeholder="Enter your Guess" required/>
+//               <input type="submit" id="guessButton" class="button" name="submit" value="Guess"/>
+//         </form>
+//
+//             <p>Guess #<span id="count">{counter}</span>!</p>
+//
+//         <ul id="guessList" class="guessBox clearfix">
+//           { guesses }
+//         </ul>
+//
+//       </section>
+//
+//     )
+//   }
+//
+// });
+//
+// document.addEventListener('DOMContentLoaded', function() {
+//   ReactDOM.render(<Game />, document.getElementById('game'));
+// });
