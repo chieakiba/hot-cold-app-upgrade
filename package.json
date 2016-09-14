@@ -6,25 +6,30 @@
   "scripts": {
     "mkdir": "mkdir -p build",
     "build": "npm run clean && npm run mkdir && npm run build:html && npm run build:css && npm run build:js",
+    "clean": "rm -rf build",
     "watch": "npm run watch:html & npm run watch:css & npm run watch:js",
-
     "build:html": "npm run clean:html && cp src/index.html build/",
     "watch:html": "npm run build:html && chokidar src/index.html -c 'npm run build:html'",
     "clean:html": "rm -f build/index.html",
-
-    "build:css": "npm run clean:css && chokidar src/style.css",
-    "watch:css": "npm run build:css && chokidar src/style.css -c 'npm run build:css'",
+    "build:css": "cp src/style.css build/",
+    "watch:css": "npm run build:css && chokidar 'src/style.css' -c 'npm run build:css'",
     "clean:css": "rm -f build/style.css",
-
     "build:js": "npm run clean:js && webpack",
     "watch:js": "npm run build:js && webpack --watch",
     "clean:js": "rm -f build/$npm_package_name.$npm_package_version.js build/$npm_package_name.$npm_package_version.js.map"
+  },
+  "babel": {
+    "presets": [
+      "es2015",
+      "react"
+    ]
   },
   "author": "Chie Akiba",
   "license": "ISC",
   "dependencies": {
     "react": "^15.3.1",
     "react-dom": "^15.3.1",
+    "react-redux": "^4.4.5",
     "redux": "^3.6.0"
   },
   "devDependencies": {

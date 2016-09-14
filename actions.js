@@ -1,6 +1,21 @@
-//Need to be able to do the following in the game
-  //Guess a number
-  //Get feedback as to how close or far you are from the right number
-  //Show the number you just guessed
-  //Have the input entry clear your entry
-  //If guessed the right number allow option to play again
+//Submit button
+var SUBMIT_GUESS = 'SUBMIT_GUESS';
+var submitGuess = function(content) {
+  return {
+    type: SUBMIT_GUESS,
+    content: content
+  }
+};
+//Play again button
+var PLAY_AGAIN = 'PLAY_AGAIN';
+var playAgain = function (content) {
+  return {
+    type: PLAY_AGAIN,
+    content: content
+  }
+};
+
+exports.SUBMIT_GUESS = SUBMIT_GUESS;
+exports.submitGuess = submitGuess;
+exports.PLAY_AGAIN = PLAY_AGAIN;
+exports.playAgain = playAgain;

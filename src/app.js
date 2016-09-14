@@ -9,7 +9,7 @@ var counter = function() {
     var newValue = +guessCount + 1;
     $('#count').text(newValue);
 };
-//store user's guess so the user can see what they guesses previously
+//store user's guess so the user can see what they guessed previously
 var newGuess;
 var newList;
 var listOfGuess = function() {
