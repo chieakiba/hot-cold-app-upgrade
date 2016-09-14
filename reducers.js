@@ -5,34 +5,28 @@ var playAgain = require('./src/playAgain');
 
 var initialGameState = [];
 
-var initialReducer = function(state, action) {
+var gameReducer = function(state, action) {
   state = state || initialGameState;
+  //If user submits their guess, enable the user's number to append to the guess list
   if (action.type === actions.SUBMIT_GUESS) {
-    return (
-      //create random number
-    )
+      //Append the user's guess on the guess list
+      return state.concat({
+        name: action.submitGuess,
+        counter: counter,
+        number: number
+      });
   }
-  else if (action.type === actions.USER_GUESS) {
-    //See if the user guessed the same number as the generated random number
-    var index = -1;
-    for (var i=0; i < state.length; i++) {
+  //If user clicks on the New Game button, clear the guess list and counter
+  else if (action.type === actions.PLAY_AGAIN) {
+    //Clear the guess list and counter
+    for (var i = 0; i < state.length; i++) {
       var guess = state[i];
-      if (randomNumber.number === action.randomNumber) {
-        index = i;
-        break;
-      }
+      state.slice(i);
     }
-    if (index === -1) {
-      throw new Error ('Could not find the number')
-    }
-
-    var before = state.slice(0, i);
-    var after = state.slice(i + 1);
-    var newGuess = Object.assign({}, randomNumber, {guess: action.guess});
-    return before.concat(newGuess, after);
+    var newGuessList = Object.assign({}, submitGuess, {counter: action.counter}, {number: action.number});
+    return newGuessList;
   }
-
   return state;
 };
 
-exports.initialGuess = initialGuess;
+exports.gameReducer = gameReducer;

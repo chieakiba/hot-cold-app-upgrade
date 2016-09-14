@@ -1,17 +1,20 @@
 //Submit button
 var SUBMIT_GUESS = 'SUBMIT_GUESS';
-var submitGuess = function(content) {
+var submitGuess = function(counter, number) {
   return {
     type: SUBMIT_GUESS,
-    content: content
+    counter: counter,
+    number: number
   }
 };
 //Play again button
 var PLAY_AGAIN = 'PLAY_AGAIN';
-var playAgain = function (content) {
+var playAgain = function (number, counter, payload) {
   return {
     type: PLAY_AGAIN,
-    content: content
+    counter: counter, 
+    number: number,
+    payload: play
   }
 };
 
