@@ -23114,20 +23114,14 @@
 	var GuessList = React.createClass({
 	  displayName: 'GuessList',
 	
-	  addGuess: function addGuess() {
-	    console.log('input', input);
-	    console.log('what is userGuesses', userGuesses);
-	    console.log('what is userGuessList', userGuessList);
-	    this.props.dispatch(actions.addGuess(userGuesses));
-	  },
 	
 	  render: function render() {
-	    var userGuesses = [];
+	    var userGuesses = [1, 2, 3, 4, 5, 6];
 	    for (var i = 0; i < this.props.guess; i++) {
 	      var userGuessList = React.createElement('li', { key: i, onChange: this.props.onClick.bind(userGuess) });
 	      userGuesses.push(userGuessList);
 	    }
-	    return React.createElement(Guess, { guess: guess });
+	    return React.createElement(Guess, { guess: userGuesses });
 	  }
 	});
 	
@@ -23147,12 +23141,21 @@
 	var Guess = React.createClass({
 	  displayName: 'Guess',
 	
+	
+	  addGuess: function addGuess(event) {
+	    event.preventDefault();
+	    console.log(this.refs.userInput.value);
+	    // set the state
+	    this.props.dispatch(actions.addGuessToList(this.refs.userInput.value));
+	  },
 	  render: function render(props) {
 	    return React.createElement(
 	      'form',
 	      null,
 	      React.createElement('input', { ref: 'userInput', type: 'text', name: 'userGuess', id: 'userGuess text', maxLength: '3', autoComplete: 'off', placeholder: 'Enter your Guess', required: true }),
 	      React.createElement('input', { onClick: this.addGuess, type: 'submit', id: 'guessButton button', name: 'submit', value: 'Guess' }),
+	      '// ',
+	      React.createElement(GuessList, null),
 	      React.createElement(
 	        'ul',
 	        { id: 'guessList clearfix' },
