@@ -8,7 +8,9 @@ var gameReducer = function(state, action) {
   if (action.type === actions.SUBMIT_GUESS) {
       //Append the user's guess on the guess list
       return state.concat({
-
+        counter: action.counter,
+        guess: action.guess,
+        feedback: action.feedback
       });
   }
   return state;

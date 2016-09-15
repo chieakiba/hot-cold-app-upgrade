@@ -23,14 +23,19 @@ var Guess = React.createClass({
       return <Guess guess={guess} key={guess.index}/>;
     });
 
+    var counters =
+    this.props.counters.map(function(counter) {
+      return <Counter counter={counter} key={counter.index}/>;
+    });
+
     return (
       <div>
         <form>
   				<input ref="userInput" type="text" name="userGuess" id="userGuess" class="text" maxlength="3" autocomplete="off" placeholder="Enter your Guess" required></input>
         			<input onClick={this.addGuess} type="submit" id="guessButton" class="button" name="submit" value="Guess"></input>
   			</form>
-        <p>Guess #<span onChange={this.addCounter} id="count">{counter}</span>!</p>
-          <ul id="guessList" class="guessBox clearfix">{userGuess}
+        <p>Guess #<span onChange={this.addCounter} id="count">{counters}</span>!</p>
+          <ul id="guessList" class="guessBox clearfix">{guesses}
     			</ul>
       </div>
     );
@@ -39,10 +44,11 @@ var Guess = React.createClass({
 
 var mapStateToProps = function(state, props) {
   return {
-
-  }
+    guesses: state,
+    counters: state
+  };
 };
 
-var Container = connect()();
+var Container = connect(mapStateToProps)(Guess);
 
 module.exports = Container;
