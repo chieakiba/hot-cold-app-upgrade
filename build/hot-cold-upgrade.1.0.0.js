@@ -58,8 +58,7 @@
 	  ReactDOM.render(React.createElement(
 	    Provider,
 	    { store: store },
-	    React.createElement(Guess, null),
-	    React.createElement(Feedback, null)
+	    React.createElement(Guess, null)
 	  ), document.getElementById('game'));
 	});
 
@@ -23104,10 +23103,7 @@
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var ReactDOM = __webpack_require__(34);
 	var connect = __webpack_require__(190).connect;
-	
-	var GuessList = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./guess-list\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 	
 	var actions = __webpack_require__(189);
 	
@@ -23180,12 +23176,13 @@
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var ReactDOM = __webpack_require__(34);
 	var connect = __webpack_require__(190).connect;
 	
 	var actions = __webpack_require__(189);
 	
-	var Feedback = React.createclass({
+	var Feedback = React.createClass({
+	  displayName: 'Feedback',
+	
 	  response: function response() {
 	
 	    //give feedback if userGuess is correct
@@ -23239,13 +23236,7 @@
 	  }
 	});
 	
-	var mapStateToProps = function mapStateToProps(state, props) {
-	  return {
-	    feedbacks: state
-	  };
-	};
-	
-	var Container = connect(mapStateToProps)(Feedback);
+	var Container = connect()(Feedback);
 	
 	module.exports = Container;
 

@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', function() {
   ReactDOM.render(
     <Provider store={store}>
       <Guess/>
-      <Feedback/>
     </Provider>,
     document.getElementById('game'));
 });

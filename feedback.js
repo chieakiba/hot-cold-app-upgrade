@@ -1,10 +1,9 @@
 var React = require('react');
-var ReactDOM = require('react-dom');
 var connect = require('react-redux').connect;
 
 var actions = require('./actions');
 
-var Feedback = React.createclass({
+var Feedback = React.createClass({
   response: function() {
 
     //give feedback if userGuess is correct
@@ -56,12 +55,6 @@ var Feedback = React.createclass({
   }
 });
 
-var mapStateToProps = function (state, props) {
-  return {
-    feedbacks: state
-  };
-};
-
-var Container = connect(mapStateToProps)(Feedback);
+var Container = connect()(Feedback);
 
 module.exports = Container;
