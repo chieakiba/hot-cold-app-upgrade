@@ -1,3 +1,5 @@
+var actions = require('./actions');
+
 var initialGameState = [];
 
 var gameReducer = function(state, action) {
@@ -6,7 +8,7 @@ var gameReducer = function(state, action) {
   if (action.type === actions.SUBMIT_GUESS) {
       //Append the user's guess on the guess list
       return state.concat({
-        
+
       });
   }
   return state;
