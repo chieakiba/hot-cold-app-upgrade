@@ -3,7 +3,7 @@ var connect = require('react-redux').connect;
 
 var actions = require('./actions');
 
-var newGame = React.createClass({
+var NewGame = React.createClass({
   render: function() {
     return (
       <ul>
@@ -12,3 +12,7 @@ var newGame = React.createClass({
     );
   }
 });
+
+var Container = connect()(NewGame);
+
+module.exports = Container;
