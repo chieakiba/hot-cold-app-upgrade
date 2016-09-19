@@ -51,13 +51,13 @@
 	var Provider = __webpack_require__(172).Provider;
 	
 	var store = __webpack_require__(196);
-	var GuessList = __webpack_require__(199);
+	var Game = __webpack_require__(200);
 	
 	document.addEventListener('DOMContentLoaded', function () {
 	  ReactDOM.render(React.createElement(
 	    Provider,
 	    { store: store },
-	    React.createElement(GuessList, null)
+	    React.createElement(Game, null)
 	  ), document.getElementById('game'));
 	});
 
@@ -23041,6 +23041,8 @@
 
 	'use strict';
 	
+	//Redux talks to the store where all the states and data are stored. The reducers apply the how-to (logic) to the states and then spit that back to the store to be saved there
+	
 	var redux = __webpack_require__(179);
 	var createStore = redux.createStore;
 	
@@ -23055,24 +23057,28 @@
 
 	'use strict';
 	
+	//Where logic for the actions are stored (so basically carries out the how-to part once the actions are fired up)
+	//Thus need to require actions.js since it only fires when the actions are fired up
 	var actions = __webpack_require__(198);
 	
-	var initialGameState = [{
+	var initialGameState = {
+	  generateRandomNumber: Math.floor(Math.random() * 100) + 1,
+	  guesses: [],
 	  counter: 0,
-	  guess: null,
-	  feedback: 'Make your Guess!'
-	}];
+	  feedback: "Make your Guess!",
+	  userGuess: ''
+	};
+	
+	console.log(initialGameState);
 	
 	var gameReducer = function gameReducer(state, action) {
 	  state = state || initialGameState;
-	  //If user submits their guess, enable the user's number to append to the guess list
-	  if (action.type === actions.SUBMIT_GUESS) {
-	    //Append the user's guess on the guess list
-	    return state.concat({
-	      counter: action.counter,
-	      guess: action.guess,
-	      feedback: action.feedback
-	    });
+	  if (action.type === actions.ON_SUBMIT) {
+	    return state.concat({});
+	  } else if (action.type === actions.ON_SUBMIT) {
+	    return state.concat({});
+	  } else if (action.type === actions.ON_SUBMIT) {
+	    return state.concat({});
 	  }
 	  return state;
 	};
@@ -23085,19 +23091,19 @@
 
 	'use strict';
 	
-	//Submit button
-	var SUBMIT_GUESS = 'SUBMIT_GUESS';
-	var submitGuess = function submitGuess(counter, guess, feedback) {
+	//Actions.js is what I want to happen when a user clicks the components on the page. This doesn't have any logic in it so it won't be able to do anything. It will send that it's been fired up to the reducers and the reducers will handle the logic (what to do) from there.
+	
+	var ON_SUBMIT = 'ON_SUBMIT';
+	var onSubmit = function onSubmit(guess, counter) {
 	  return {
-	    type: SUBMIT_GUESS,
-	    counter: counter,
+	    type: ON_SUBMIT,
 	    guess: guess,
-	    feedback: feedback
+	    counter: counter
 	  };
 	};
 	
-	exports.SUBMIT_GUESS = SUBMIT_GUESS;
-	exports.submitGuess = submitGuess;
+	exports.ON_SUBMIT = ON_SUBMIT;
+	exports.onSubmit = onSubmit;
 
 /***/ },
 /* 199 */
@@ -23107,25 +23113,50 @@
 	
 	var React = __webpack_require__(1);
 	var connect = __webpack_require__(172).connect;
-	var Guess = __webpack_require__(200);
 	
-	var actions = __webpack_require__(198);
-	
-	var GuessList = React.createClass({
-	  displayName: 'GuessList',
-	
+	var Guess = React.createClass({
+	  displayName: 'Guess',
 	
 	  render: function render() {
-	    var userGuesses = [1, 2, 3, 4, 5, 6];
-	    for (var i = 0; i < this.props.guess; i++) {
-	      var userGuessList = React.createElement('li', { key: i, onChange: this.props.onClick.bind(userGuess) });
-	      userGuesses.push(userGuessList);
-	    }
-	    return React.createElement(Guess, { guess: userGuesses });
+	    var guesses = '';
+	    var guessLists = this.props.guessLists.map(function (guessList) {
+	      return React.createElement(
+	        'li',
+	        { key: guessList },
+	        guessList
+	      );
+	    });
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'p',
+	        null,
+	        'Guess #',
+	        React.createElement(
+	          'span',
+	          { ref: 'guessCounter', id: 'count' },
+	          this.props.counter
+	        ),
+	        '!'
+	      ),
+	      React.createElement(
+	        'ul',
+	        { id: 'guessList', className: 'guessBox clearfix' },
+	        guessLists
+	      )
+	    );
 	  }
 	});
 	
-	module.exports = GuessList;
+	var mapStateToProps = function mapStateToProps(state, props) {
+	  return {
+	    guessLists: state.guesses
+	  };
+	};
+	
+	var Container = connect(mapStateToProps)(Guess);
+	module.exports = Container;
 
 /***/ },
 /* 200 */
@@ -23137,35 +23168,97 @@
 	var connect = __webpack_require__(172).connect;
 	
 	var actions = __webpack_require__(198);
+	var UserInput = __webpack_require__(201);
+	var Guess = __webpack_require__(199);
+	var Feedback = __webpack_require__(202);
 	
-	var Guess = React.createClass({
-	  displayName: 'Guess',
+	var Game = React.createClass({
+	  displayName: 'Game',
 	
-	
-	  addGuess: function addGuess(event) {
-	    event.preventDefault();
-	    console.log(this.refs.userInput.value);
-	    // set the state
-	    this.props.dispatch(actions.addGuessToList(this.refs.userInput.value));
-	  },
-	  render: function render(props) {
+	  render: function render() {
 	    return React.createElement(
-	      'form',
+	      'div',
 	      null,
-	      React.createElement('input', { ref: 'userInput', type: 'text', name: 'userGuess', id: 'userGuess text', maxLength: '3', autoComplete: 'off', placeholder: 'Enter your Guess', required: true }),
-	      React.createElement('input', { onClick: this.addGuess, type: 'submit', id: 'guessButton button', name: 'submit', value: 'Guess' }),
-	      '// ',
-	      React.createElement(GuessList, null),
+	      React.createElement(Feedback, null),
+	      React.createElement(UserInput, null),
+	      React.createElement(Guess, null)
+	    );
+	  }
+	});
+	
+	module.exports = Game;
+
+/***/ },
+/* 201 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var connect = __webpack_require__(172).connect;
+	
+	var actions = __webpack_require__(198);
+	
+	var UserInput = React.createClass({
+	  displayName: 'UserInput',
+	
+	  onClick: function onClick(event) {
+	    event.preventDefault();
+	    var userNumber = this.props.dispatch(actions.onSubmit(this.refs.userGuess.value, this.props.counter));
+	    this.refs.userGuess.value = '';
+	  },
+	  render: function render() {
+	    return React.createElement(
+	      'div',
+	      null,
 	      React.createElement(
-	        'ul',
-	        { id: 'guessList clearfix' },
-	        this.props.children
+	        'form',
+	        null,
+	        React.createElement('input', { ref: 'userGuess', type: 'text', name: 'userGuess', id: 'userGuess', className: 'text', autoComplete: 'off', placeholder: 'Enter your Guess', required: true }),
+	        React.createElement('input', { onClick: this.onClick, type: 'submit', id: 'guessButton', className: 'button', name: 'submit', value: 'Guess' })
 	      )
 	    );
 	  }
 	});
 	
-	module.exports = Guess;
+	var mapStateToProps = function mapStateToProps(state, props) {
+	  return {
+	    counter: state.counter
+	  };
+	};
+	
+	var Container = connect(mapStateToProps)(UserInput);
+	module.exports = Container;
+
+/***/ },
+/* 202 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var connect = __webpack_require__(172).connect;
+	
+	var Feedback = React.createClass({
+	  displayName: 'Feedback',
+	
+	  render: function render() {
+	    return React.createElement(
+	      'h2',
+	      { id: 'feedback' },
+	      this.props.msg
+	    );
+	  }
+	});
+	
+	var mapStateToProps = function mapStateToProps(state, props) {
+	  return {
+	    msg: state.msg
+	  };
+	};
+	
+	var Container = connect(mapStateToProps)(Feedback);
+	module.exports = Container;
 
 /***/ }
 /******/ ]);

@@ -3,12 +3,12 @@ var ReactDOM = require('react-dom');
 var Provider = require('react-redux').Provider;
 
 var store = require('./store');
-var GuessList = require('./guess-list');
+var Game = require('./components/game');
 
 document.addEventListener('DOMContentLoaded', function() {
   ReactDOM.render(
     <Provider store={store}>
-      <GuessList/>
+      <Game/>
     </Provider>,
     document.getElementById('game'));
 });
