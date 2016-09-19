@@ -23073,12 +23073,41 @@
 	
 	var gameReducer = function gameReducer(state, action) {
 	  state = state || initialGameState;
-	  if (action.type === actions.ON_SUBMIT) {
-	    return state.concat({});
-	  } else if (action.type === actions.ON_SUBMIT) {
-	    return state.concat({});
-	  } else if (action.type === actions.ON_SUBMIT) {
-	    return state.concat({});
+	  switch (action.type) {
+	    case actions.ON_SUBMIT:
+	      var correctGuess = false;
+	      var msg;
+	      var counter = 0;
+	      action.guess = parseInt(action.guess);
+	      if (action.guess === state.onSubmit) {
+	        correct = true;
+	        msg = 'Correct! Click "New Game" to play again.';
+	      } else if (state.generateRandomNumber - 1 <= action.guess && state.generateRandomNumber + 10 >= action.guess) {
+	        correct = false;
+	        msg = 'Hot!';
+	      } else if (state.generateRandomNumber - 11 <= action.guess && state.generateRandomNumber + 20 >= action.guess) {
+	        correct = false;
+	        msg = 'Warmer';
+	      } else if (state.generateRandomNumber - 21 <= action.guess && state.generateRandomNumber + 30 >= action.guess) {
+	        correct = false;
+	        msg = 'Cold!';
+	      } else {
+	        msg = 'Very Cold!';
+	      }
+	      var guessLists = state.guesses.concat(action.guess);
+	      counter = state.counter + 1;
+	      if (isNaN(action.guess)) {
+	        msg = 'Please enter a number';
+	      } else {
+	        guessLists;
+	        counter;
+	      }
+	      return Object.assign({}, state, {
+	        guesses: guessLists,
+	        counter: counter,
+	        msg: msg
+	      });
+	      break;
 	  }
 	  return state;
 	};
