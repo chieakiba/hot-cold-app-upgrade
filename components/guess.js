@@ -2,7 +2,7 @@ var React = require('react');
 var connect = require('react-redux').connect;
 
 var Guess = React.createClass({
-  render: function () {
+  render: function (props) {
     var guesses = '';
     var guessLists = this.props.guessLists.map(function(guessList) {
       return <li key={guessList}>{guessList}</li>
@@ -18,6 +18,7 @@ var Guess = React.createClass({
 
 var mapStateToProps = function(state, props) {
   return {
+    counter: state.counter,
     guessLists: state.guesses
   };
 };
