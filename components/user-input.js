@@ -6,8 +6,8 @@ var actions = require('../actions');
 var UserInput = React.createClass({
   onClick: function (event) {
     event.preventDefault();
-    var userNumber = this.props.dispatch(actions.onSubmit(this.refs.userGuess.value, this.props.counter));
-    this.refs.userGuess.value = '';
+    this.props.dispatch(actions.onSubmit(this.refs.userGuess.value, this.props.counter));
+    var guess = this.refs.userGuess.value = '';
   },
   render: function() {
     return (
