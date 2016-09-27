@@ -1,18 +1,19 @@
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost:8081/');
+mongoose.connect('mongodb://localhost/');
 
 mongoose.connection.on('error', function (err) {
   console.error('Could not connect. Error:', err);
 });
 
-mongoose.connection.once('open', function () {
-  var BestScoreSchema = mongoose.Schema({
-    counter: {type: String},
-    guess: {type: String}
-  });
+var BestScoreSchema = mongoose.Schema({
+  counter: {type: String},
+  guess: {type: String}
+});
 
-  var BestScore = mongoose.model('BestScore', ScoreSchema);
+var BestScore = mongoose.model('BestScore', BestScoreSchema);
+
+mongoose.connection.once('open', function () {
 
   var create = function (counter, guess) {
     var bestScore = {
@@ -79,10 +80,10 @@ mongoose.connection.once('open', function () {
       del (process.argv[3]);
     } else {
       console.error('Command not recognized');
-      db.close();
+      mongoose.disconnect();
     }
   };
   main();
 });
 
-module.exports = Guesses;
+module.exports = BestScore;
