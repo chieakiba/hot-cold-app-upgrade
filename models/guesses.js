@@ -1,89 +1,88 @@
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/');
+mongoose.connect('mongodb://localhost:8081/');
 
 mongoose.connection.on('error', function (err) {
   console.error('Could not connect. Error:', err);
 });
 
 mongoose.connection.once('open', function () {
-  var scoreSchema = mongoose.Schema({
-    session: {type: String, unique: true},
-    counter: String,
-    guess: String
+  var BestScoreSchema = mongoose.Schema({
+    counter: {type: String},
+    guess: {type: String}
   });
 
-  var Score = mongoose.model('Score', scoreSchema);
+  var BestScore = mongoose.model('BestScore', ScoreSchema);
 
-    var create = function (session, counter, guess) {
-      var score = {
-        session: session,
-        counter: counter,
-        guess: guess
-      };
-      Score.create(session, function (err, score) {
-        if (err || !score) {
-          console.error("Could not create session", counter);
-          mongoose.disconnect();
-          return;
-        }
-        console.log("Created session", session, counter);
+  var create = function (counter, guess) {
+    var bestScore = {
+      counter: counter,
+      guess: guess
+    };
+    BestScore.create(session, function (err, bestScore) {
+      if (err || !bestScore) {
+        console.error("Could not create bestScore", counter);
         mongoose.disconnect();
-      });
-    };
-
-    var read = function (session, counter, guess) {
-      Score.findOne({session: session}, {counter: counter}, {guess: guess}, function (err, score) {
-        if (!score || err) {
-          console.error("Could not read session", counter);
-          mongoose.disconnect();
-          return;
-        }
-        console.log("Read session", score.session);
-        console.log(score.counter);
-        mongoose.disconnect();
-      });
-    };
-
-    var update = function (session, counter, guess) {
-      Score.findOneAndUpdate({session: session}, {counter: counter}, {guess: guess}, function (err, score) {
-        if (!score || err) {
-          console.error("Could not update score", counter);
-          mongoose.disconnect();
-          return;
-        }
-        console.log("Updated score", score.counter);
-        mongoose.connect();
-      });
-    };
-
-    var del = function (session, counter, guess) {
-      Score.findOneAndRemove({session: session}, {counter: counter}, {guess: guess}, function (err, score) {
-        var score = result.value;
-        if (!score || err) {
-          console.error("Could not delete score", counter);
-          mongoose.disconnect();
-          return;
-        }
-        console.log("Deleted score", score.counter);
-        mongoose.disconnect();
-      });
-    };
-
-    var main = function() {
-      if (process.argv[2] == 'create') {
-        create(process.argv[3], process.argv[4]);
-      } else if (process.argv[2] == 'read') {
-        read(process.argv[3]);
-      } else if (process.argv[2] == 'update') {
-        update(process.argv[3], process.argv[4]);
-      } else if (process.argv[2] == 'delete') {
-        del (process.argv[3]);
-      } else {
-        console.error('Command not recognized');
-        db.close();
+        return;
       }
-    };
-    main();
-  });
+      console.log("Created bestScore", session, counter);
+      mongoose.disconnect();
+    });
+  };
+
+  var read = function (counter, guess) {
+    BestScore.findOne({counter: counter}, {guess: guess}, function (err, bestScore) {
+      if (!bestScore || err) {
+        console.error("Could not read bestScore", counter);
+        mongoose.disconnect();
+        return;
+      }
+      console.log("Read bestScore", bestScore.counter);
+      console.log(bestScore.counter, bestScore.guess);
+      mongoose.disconnect();
+    });
+  };
+
+  var update = function (counter, guess) {
+    BestScore.findOneAndUpdate({counter: counter}, {guess: guess}, function (err, bestScore) {
+      if (!bestScore || err) {
+        console.error("Could not update bestScore", counter);
+        mongoose.disconnect();
+        return;
+      }
+      console.log("Updated bestScore", bestScore.counter);
+      mongoose.connect();
+    });
+  };
+
+  var del = function (counter, guess) {
+    BestScore.findOneAndRemove({counter: counter}, {guess: guess}, function (err, bestScore) {
+      var bestScore = result.value;
+      if (!bestScore || err) {
+        console.error("Could not delete bestScore", counter);
+        mongoose.disconnect();
+        return;
+      }
+      console.log("Deleted bestScore", bestScore.counter);
+      mongoose.disconnect();
+    });
+  };
+
+  var main = function() {
+    if (process.argv[2] == 'create') {
+      create(process.argv[3], process.argv[4]);
+    } else if (process.argv[2] == 'read') {
+      read(process.argv[3]);
+    } else if (process.argv[2] == 'update') {
+      update(process.argv[3], process.argv[4]);
+    } else if (process.argv[2] == 'delete') {
+      del (process.argv[3]);
+    } else {
+      console.error('Command not recognized');
+      db.close();
+    }
+  };
+  main();
 });
+
+module.exports = Guesses;
