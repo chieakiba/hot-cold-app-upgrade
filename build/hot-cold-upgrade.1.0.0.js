@@ -23849,7 +23849,7 @@
 	        'p',
 	        null,
 	        'Fewest Guesses thus far: ',
-	        this.props.fewestGuesses
+	        this.props.bestScore.counter
 	      ),
 	      React.createElement(
 	        'p',
@@ -23873,7 +23873,6 @@
 	
 	var mapStateToProps = function mapStateToProps(state, props) {
 	  return {
-	    fewestGuesses: state.fewestGuesses,
 	    counter: state.counter,
 	    guessLists: state.guesses
 	  };
