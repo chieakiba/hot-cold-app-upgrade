@@ -23097,7 +23097,8 @@
 	  counter: 0,
 	  feedback: "Make your Guess!",
 	  userGuess: '',
-	  fewestGuesses: 'N/A'
+	  fewestGuesses: 0,
+	  currentUserScore: 0
 	};
 	
 	console.log(initialGameState);
@@ -23108,11 +23109,9 @@
 	    case actions.ON_SUBMIT:
 	      var correctGuess = false;
 	      var msg;
-	      var counter = state.counter + 1;
-	      console.log('what is counter', counter);
+	      var counter = 0;
 	      var guessLists = state.guesses.concat(action.guess);
 	      console.log('what is guessLists', guessLists);
-	      console.log('what is guess', guess);
 	      action.guess = parseInt(action.guess);
 	      if (action.guess === state.generateRandomNumber) {
 	        correctGuess = true;
@@ -23131,10 +23130,12 @@
 	      } else {
 	        msg = 'Very Cold!';
 	      }
+	      counter = state.counter + 1;
 	      if (isNaN(action.guess)) {
-	        msg = 'Please enter a number';
+	        msg = 'Please enter a number!';
 	      } else {
 	        guessLists;
+	        counter;
 	      }
 	      return Object.assign({}, state, {
 	        guesses: guessLists,
@@ -23142,17 +23143,33 @@
 	        msg: msg
 	      });
 	      break;
-	    case actions.ADD_FEWEST_GUESSES_SUCCESS:
-	      var fewestGuesses = '';
-	      if (action.guess === state.generateRandomNumber) {
-	        return Object.assign({}, state, {
-	          fewestGuesses: counter
-	        });
-	      } else if (action.counter < state.fewestGuesses) {
-	        return Object.assign({}, state, {
-	          fewestGuesses: counter
-	        });
-	      }
+	
+	    case actions.NEW_GAME:
+	      var newGame = Object.assign({}, state, {
+	        generateRandomNumber: Math.floor(Math.random() * 100) + 1,
+	        guesses: [],
+	        counter: 0,
+	        feedback: "New Game! Make your Guess!",
+	        userGuess: ''
+	      });
+	      return newGame;
+	      break;
+	
+	    case actions.FETCH_FEWEST_GUESSES_SUCCESS:
+	      var fewestGuesses = action.fewestGuesses;
+	      var fewestUserGuess = Object.assign({}, state, {
+	        fewestGuesses: fewestGuesses
+	      });
+	      return fewestUserGuess;
+	      break;
+	
+	    case actions.POST_FEWEST_GUESSES_SUCCESS:
+	      counter = state.counter;
+	      var currentUserScore = counter;
+	      var newScore = Object.assign({}, state, {
+	        currentUserScore: currentUserScore
+	      });
+	      return newScore;
 	      break;
 	  }
 	  return state;
@@ -23178,20 +23195,35 @@
 	  };
 	};
 	
-	var ADD_FEWEST_GUESSES_SUCCESS = 'ADD_FEWEST_GUESSES_SUCCESS';
-	var addFewestGuessesSuccess = function addFewestGuessesSuccess(counter) {
+	var NEW_GAME = 'NEW_GAME';
+	var newGame = function newGame(game) {
 	  return {
-	    type: ADD_FEWEST_GUESSES_SUCCESS,
-	    counter: counter
+	    type: NEW_GAME,
+	    game: game
 	  };
 	};
 	
-	var fetchFewestGuesses = function fetchFewestGuesses(counter) {
+	var FETCH_FEWEST_GUESSES_SUCCESS = 'FETCH_FEWEST_GUESSES_SUCCESS';
+	var fetchFewestGuessesSuccess = function fetchFewestGuessesSuccess(fewestGuesses) {
+	  return {
+	    type: FETCH_FEWEST_GUESSES_SUCCESS,
+	    fewestGuesses: fewestGuesses
+	  };
+	};
+	
+	var FETCH_FEWEST_GUESSES_ERROR = 'FETCH_FEWEST_GUESSES_ERROR';
+	var fetchFewestGuessesError = function fetchFewestGuessesError(fewestGuesses, error) {
+	  return {
+	    type: FETCH_FEWEST_GUESSES_ERROR,
+	    fewestGuesses: fewestGuesses,
+	    error: error
+	  };
+	};
+	
+	var fetchGuesses = function fetchGuesses(fewestGuesses) {
 	  return function (dispatch) {
-	    var fewestGuesses = '';
-	    var saveFewestGuesses = counter;
-	    console.log('what is in saveFewestGuesses', saveFewestGuesses);
-	    return fetch(saveFewestGuesses).then(function (response) {
+	    var url = 'http://localhost:8080/fewest-guesses';
+	    return fetch(url).then(function (response) {
 	      if (response.status < 200 || response.status >= 300) {
 	        var error = new Error(response.statusText);
 	        error.response = response;
@@ -23201,19 +23233,65 @@
 	    }).then(function (response) {
 	      return response.json();
 	    }).then(function (data) {
-	      var counter = data.counter;
-	      return dispatch(fetchFewestGuesses(counter));
+	      var fewestGuesses = data[0].bestScore;
+	      return dispatch(fetchFewestGuessesSuccess(fewestGuesses));
 	    }).catch(function (error) {
-	      return dispatch(fetchFewestGuesses(counter, error));
+	      return dispatch(fetchFewestGuessesError(fewestGuesses, error));
+	    });
+	  };
+	};
+	
+	var POST_FEWEST_GUESSES_SUCCESS = 'POST_FEWEST_GUESSES_SUCCESS';
+	var postFewestGuessesSuccess = function postFewestGuessesSuccess(currentUserScore) {
+	  return {
+	    type: POST_FEWEST_GUESSES_SUCCESS,
+	    currentUserScore: currentUserScore
+	  };
+	};
+	
+	var POST_FEWEST_GUESSES_ERROR = 'POST_FEWEST_GUESSES_ERROR';
+	var postFewestGuessesError = function postFewestGuessesError(currentUserScore, error) {
+	  return {
+	    type: POST_FEWEST_GUESSES_ERROR,
+	    currentUserScore: currentUserScore,
+	    error: error
+	  };
+	};
+	
+	var postGuesses = function postGuesses(currentUserScore) {
+	  return function (dispatch) {
+	    var url = 'http://localhost:8080/fewest-guesses';
+	    return fetch(url, {
+	      method: 'post',
+	      headers: {
+	        'content-type': 'application/json'
+	      },
+	      body: JSON.stringify({ currentUserScore: currentUserScore })
+	    }).then(function (response) {
+	      if (response.status < 200 || response.status >= 300) {
+	        var error = new Error(response.statusText);
+	        error.response = response;
+	        throw error;
+	      }
+	      return response.json({});
+	    }).then(function (data) {
+	      return dispatch(postFewestGuessesSuccess(currentUserScore));
+	    }).catch(function (error) {
+	      return dispatch(postFewestGuessesError(currentUserScore, error));
 	    });
 	  };
 	};
 	
 	exports.ON_SUBMIT = ON_SUBMIT;
 	exports.onSubmit = onSubmit;
-	exports.ADD_FEWEST_GUESSES_SUCCESS = ADD_FEWEST_GUESSES_SUCCESS;
-	exports.addFewestGuessesSuccess = addFewestGuessesSuccess;
-	exports.fetchFewestGuesses = fetchFewestGuesses;
+	exports.ADD_FEWEST_GUESSES_SUCCESS = FETCH_FEWEST_GUESSES_SUCCESS;
+	exports.addFewestGuessesSuccess = fetchFewestGuessesSuccess;
+	exports.fetchGuesses = fetchGuesses;
+	exports.POST_FEWEST_GUESSES_SUCCESS = POST_FEWEST_GUESSES_SUCCESS;
+	exports.postFewestGuessesSuccess;
+	exports.POST_FEWEST_GUESSES_ERROR = POST_FEWEST_GUESSES_ERROR;
+	exports.postFewestGuessesError;
+	exports.postGuesses = postGuesses;
 
 /***/ },
 /* 200 */
@@ -23753,10 +23831,10 @@
 	  displayName: 'Guess',
 	
 	  componentDidMount: function componentDidMount() {
-	    this.props.dispatch(actions.fetchFewestGuesses(this.props.counter));
+	    this.props.dispatch(actions.fetchGuesses(this.props.counter));
 	  },
 	  render: function render(props) {
-	    var guesses = '';
+	    var guesses = [];
 	    var guessLists = this.props.guessLists.map(function (guessList) {
 	      return React.createElement(
 	        'li',

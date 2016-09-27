@@ -10,20 +10,35 @@ var onSubmit = function (guess, counter) {
   }
 };
 
-var ADD_FEWEST_GUESSES_SUCCESS = 'ADD_FEWEST_GUESSES_SUCCESS';
-var addFewestGuessesSuccess = function (counter) {
+var NEW_GAME = 'NEW_GAME';
+var newGame = function (game) {
   return {
-    type: ADD_FEWEST_GUESSES_SUCCESS,
-    counter: counter
+    type: NEW_GAME,
+    game: game
+  }
+};
+
+var FETCH_FEWEST_GUESSES_SUCCESS = 'FETCH_FEWEST_GUESSES_SUCCESS';
+var fetchFewestGuessesSuccess = function (fewestGuesses) {
+  return {
+    type: FETCH_FEWEST_GUESSES_SUCCESS,
+    fewestGuesses: fewestGuesses
   };
 };
 
-var fetchFewestGuesses = function (counter) {
+var FETCH_FEWEST_GUESSES_ERROR = 'FETCH_FEWEST_GUESSES_ERROR';
+var fetchFewestGuessesError = function (fewestGuesses, error) {
+  return {
+    type: FETCH_FEWEST_GUESSES_ERROR,
+    fewestGuesses: fewestGuesses,
+    error: error
+  };
+};
+
+var fetchGuesses = function (fewestGuesses) {
   return function(dispatch) {
-    var fewestGuesses = '';
-    var saveFewestGuesses = counter;
-    console.log('what is in saveFewestGuesses', saveFewestGuesses);
-    return fetch(saveFewestGuesses).then(function(response) {
+    var url = 'http://localhost:8080/fewest-guesses';
+    return fetch(url).then(function(response) {
       if (response.status < 200 || response.status >= 300) {
         var error = new Error(response.statusText)
         error.response = response
@@ -35,17 +50,65 @@ var fetchFewestGuesses = function (counter) {
       return response.json();
     })
     .then(function(data) {
-      var counter = data.counter;
-      return dispatch(fetchFewestGuesses(counter));
+      var fewestGuesses = data[0].bestScore;
+      return dispatch(fetchFewestGuessesSuccess(fewestGuesses));
     })
     .catch(function(error) {
-      return dispatch(fetchFewestGuesses(counter, error));
+      return dispatch(fetchFewestGuessesError(fewestGuesses, error));
+    });
+  }
+};
+
+var POST_FEWEST_GUESSES_SUCCESS = 'POST_FEWEST_GUESSES_SUCCESS';
+var postFewestGuessesSuccess = function(currentUserScore) {
+  return {
+    type: POST_FEWEST_GUESSES_SUCCESS,
+    currentUserScore: currentUserScore
+  };
+};
+
+var POST_FEWEST_GUESSES_ERROR = 'POST_FEWEST_GUESSES_ERROR';
+var postFewestGuessesError = function(currentUserScore, error) {
+  return {
+    type: POST_FEWEST_GUESSES_ERROR,
+    currentUserScore: currentUserScore,
+    error: error
+  };
+};
+
+var postGuesses = function(currentUserScore) {
+  return function(dispatch) {
+    var url = 'http://localhost:8080/fewest-guesses';
+    return fetch(url, {
+      method: 'post',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({currentUserScore})
+    }).then(function(response) {
+      if (response.status < 200 || response.status >= 300) {
+        var error = new Error(response.statusText)
+        error.response = response
+        throw error;
+      }
+      return response.json({});
+    })
+    .then(function(data) {
+      return dispatch(postFewestGuessesSuccess(currentUserScore))
+    })
+    .catch(function(error) {
+      return dispatch(postFewestGuessesError(currentUserScore, error));
     });
   }
 };
 
 exports.ON_SUBMIT = ON_SUBMIT;
 exports.onSubmit = onSubmit;
-exports.ADD_FEWEST_GUESSES_SUCCESS = ADD_FEWEST_GUESSES_SUCCESS;
-exports.addFewestGuessesSuccess = addFewestGuessesSuccess;
-exports.fetchFewestGuesses = fetchFewestGuesses;
+exports.ADD_FEWEST_GUESSES_SUCCESS = FETCH_FEWEST_GUESSES_SUCCESS;
+exports.addFewestGuessesSuccess = fetchFewestGuessesSuccess;
+exports.fetchGuesses = fetchGuesses;
+exports.POST_FEWEST_GUESSES_SUCCESS = POST_FEWEST_GUESSES_SUCCESS;
+exports.postFewestGuessesSuccess;
+exports.POST_FEWEST_GUESSES_ERROR = POST_FEWEST_GUESSES_ERROR;
+exports.postFewestGuessesError;
+exports.postGuesses = postGuesses;

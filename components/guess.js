@@ -5,10 +5,10 @@ var actions = require('../actions');
 
 var Guess = React.createClass({
   componentDidMount: function () {
-     this.props.dispatch(actions.fetchFewestGuesses(this.props.counter));
+     this.props.dispatch(actions.fetchGuesses(this.props.counter));
   },
   render: function (props) {
-    var guesses = '';
+    var guesses = [];
     var guessLists = this.props.guessLists.map(function(guessList) {
       return <li key={guessList}>{guessList}</li>
     });

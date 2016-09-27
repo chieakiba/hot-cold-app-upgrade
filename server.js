@@ -2,34 +2,53 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var jsonParser = bodyParser.json();
 var app = express();
+app.use(bodyParser.json());
+app.use(express.static('build'));
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/8080');
 
-var Storage = {
-  add: function(counter) {
-    var userGuesses = [];
-    var userGuess = {counter: counter};
-    this.userGuesses.push(counter);
-    return userGuesses;
-  }
-};
+var Guesses = require('./models/guesses');
+var bestScore;
 
-var createStorage = function() {
-  var storage = Object.create(Storage);
-  storage.userGuesses = [];
-  return storage;
-}
-
-var storage = createStorage();
-
-app.get('/fewest-guesses', function(request, response) {
-  response.json(storage.userGuesses);
+app.get('/', function (req, res) {
+  res.sendFile(__dirname + '/index.html');
 });
 
-app.post('/fewest-guesses', jsonParser, function(request, response) {
-  if(!('fewestGuesses' in request.body)) {
-    return response.sendStatus(400);
-  }
-  var userGuess = storage.add(request.body.userGuess);
-  response.status(201).json(userGuess);
+app.get('/fewest-guesses', function (req, res) {
+  Guesses.find(function (err, bestScore) {
+    if (err) {
+      return res.status(500).json({
+        message: 'Internal Server Error'
+      });
+    }
+    res.json({best});
+  });
+});
+
+app.post('/fewest-guesses', function (req, res) {
+
+  Guesses.findOne(function(err, bestScore) {
+    if (parseInt(bestScore.bestScore) > parseInt(req.body.currentUserScore)) {
+      Guesses.update({
+        $set: {bestScore: req.body.currentUserScore}
+      }, function (err, bestScore) {
+        if (err) {
+          return res.status(500).json({
+            message: 'Internal Server Error'
+          });
+        }
+        res.status(201).json(bestScore);
+      });
+    } else {
+      res.status(200).json(bestScore);
+    }
+  });
+});
+
+app.use('*', function (req, res) {
+  res.status(404).json({
+    message: 'Not Found'
+  });
 });
 
 app.listen(process.env.PORT || 8080, process.env.IP);
