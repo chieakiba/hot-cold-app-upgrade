@@ -167,7 +167,7 @@ h1 {
    Game Section Styles
 ---------------------------------------------------------------------------------*/
 
-.game {
+#game {
 	position: relative;
 	background-color: #394264;
 	width: 380px;
