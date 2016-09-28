@@ -23203,93 +23203,10 @@
 	  };
 	};
 	
-	var FETCH_FEWEST_GUESSES_SUCCESS = 'FETCH_FEWEST_GUESSES_SUCCESS';
-	var fetchFewestGuessesSuccess = function fetchFewestGuessesSuccess(fewestGuesses) {
-	  return {
-	    type: FETCH_FEWEST_GUESSES_SUCCESS,
-	    fewestGuesses: fewestGuesses
-	  };
-	};
-	
-	var FETCH_FEWEST_GUESSES_ERROR = 'FETCH_FEWEST_GUESSES_ERROR';
-	var fetchFewestGuessesError = function fetchFewestGuessesError(fewestGuesses, error) {
-	  return {
-	    type: FETCH_FEWEST_GUESSES_ERROR,
-	    fewestGuesses: fewestGuesses,
-	    error: error
-	  };
-	};
-	
-	var fetchGuesses = function fetchGuesses(fewestGuesses) {
-	  return function (dispatch) {
-	    var url = 'http://localhost:8080/fewest-guesses';
-	    return fetch(url).then(function (response) {
-	      if (response.status < 200 || response.status >= 300) {
-	        var error = new Error(response.statusText);
-	        error.response = response;
-	        throw error;
-	      }
-	      return response.json();
-	    }).then(function (data) {
-	      var fewestGuesses = data[0].bestScore;
-	      return dispatch(fetchFewestGuessesSuccess(fewestGuesses));
-	    }).catch(function (error) {
-	      return dispatch(fetchFewestGuessesError(fewestGuesses, error));
-	    });
-	  };
-	};
-	
-	var POST_FEWEST_GUESSES_SUCCESS = 'POST_FEWEST_GUESSES_SUCCESS';
-	var postFewestGuessesSuccess = function postFewestGuessesSuccess(currentUserScore) {
-	  return {
-	    type: POST_FEWEST_GUESSES_SUCCESS,
-	    currentUserScore: currentUserScore
-	  };
-	};
-	
-	var POST_FEWEST_GUESSES_ERROR = 'POST_FEWEST_GUESSES_ERROR';
-	var postFewestGuessesError = function postFewestGuessesError(currentUserScore, error) {
-	  return {
-	    type: POST_FEWEST_GUESSES_ERROR,
-	    currentUserScore: currentUserScore,
-	    error: error
-	  };
-	};
-	
-	var postGuesses = function postGuesses(currentUserScore) {
-	  return function (dispatch) {
-	    var url = 'http://localhost:8080/fewest-guesses';
-	    return fetch(url, {
-	      method: 'post',
-	      headers: {
-	        'content-type': 'application/json'
-	      },
-	      body: JSON.stringify({ currentUserScore: currentUserScore })
-	    }).then(function (response) {
-	      if (response.status < 200 || response.status >= 300) {
-	        var error = new Error(response.statusText);
-	        error.response = response;
-	        throw error;
-	      }
-	      return response.json({});
-	    }).then(function (data) {
-	      return dispatch(postFewestGuessesSuccess(currentUserScore));
-	    }).catch(function (error) {
-	      return dispatch(postFewestGuessesError(currentUserScore, error));
-	    });
-	  };
-	};
-	
 	exports.ON_SUBMIT = ON_SUBMIT;
 	exports.onSubmit = onSubmit;
-	exports.ADD_FEWEST_GUESSES_SUCCESS = FETCH_FEWEST_GUESSES_SUCCESS;
-	exports.addFewestGuessesSuccess = fetchFewestGuessesSuccess;
-	exports.fetchGuesses = fetchGuesses;
-	exports.POST_FEWEST_GUESSES_SUCCESS = POST_FEWEST_GUESSES_SUCCESS;
-	exports.postFewestGuessesSuccess;
-	exports.POST_FEWEST_GUESSES_ERROR = POST_FEWEST_GUESSES_ERROR;
-	exports.postFewestGuessesError;
-	exports.postGuesses = postGuesses;
+	exports.NEW_GAME = NEW_GAME;
+	exports.newGame = newGame;
 
 /***/ },
 /* 200 */
@@ -23829,9 +23746,6 @@
 	var Guess = React.createClass({
 	  displayName: 'Guess',
 	
-	  componentDidMount: function componentDidMount() {
-	    this.props.dispatch(actions.fetchGuesses(this.props.fewestGuesses));
-	  },
 	  render: function render(props) {
 	    var guesses = [];
 	    var guessLists = this.props.guessLists.map(function (guessList) {
@@ -23844,12 +23758,6 @@
 	    return React.createElement(
 	      'div',
 	      null,
-	      React.createElement(
-	        'p',
-	        null,
-	        'Fewest Guesses thus far: ',
-	        this.props.fewestGuesses
-	      ),
 	      React.createElement(
 	        'p',
 	        null,
