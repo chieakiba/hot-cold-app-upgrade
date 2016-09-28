@@ -23112,7 +23112,6 @@
 	      var counter = 0;
 	      var guessLists = state.guesses.concat(action.guess);
 	      console.log('what is guessLists', guessLists);
-	      console.log('what is feedback', feedback);
 	      action.guess = parseInt(action.guess);
 	      if (action.guess === state.generateRandomNumber) {
 	        correctGuess = true;
@@ -23204,10 +23203,58 @@
 	  };
 	};
 	
+	var FETCH_FEWEST_GUESSES_SUCCESS = 'FETCH_FEWEST_GUESSES_SUCCESS';
+	var fetchFewestGuessesSuccess = function fetchFewestGuessesSuccess(guess, counter) {
+	  return {
+	    type: FETCH_FEWEST_GUESSES_SUCCESS,
+	    guess: guess,
+	    counter: counter
+	  };
+	};
+	
+	var FETCH_FEWEST_GUESSES_ERROR = 'FETCH_FEWEST_GUESSES_ERROR';
+	var fetchFewestGuessesError = function fetchFewestGuessesError(guess, counter, error) {
+	  return {
+	    type: FETCH_FEWEST_GUESSES_ERROR,
+	    guess: guess,
+	    counter: counter,
+	    error: error
+	  };
+	};
+	
+	var fetchGuesses = function fetchGuesses(guess, counter) {
+	  return function (dispatch) {
+	    var url = 'https://localhost:8080/';
+	    return fetch(url).then(function (res) {
+	      if (res.status < 200 || res.status >= 300) {
+	        var error = new Error(res.statusText);
+	        error.res = res;
+	        throw error;
+	      }
+	      return res;
+	    }).then(function (res) {
+	      return res.json();
+	    }).then(function (data) {
+	      var guess = data.guess;
+	      var counter = data.counter;
+	      return;
+	      dispatch(fetchFewestGuessesSuccess(guess, counter));
+	    }).catch(function (error) {
+	      return;
+	      dispatch(fetchFewestGuessesError(guess, counter, error));
+	    });
+	  };
+	};
+	
 	exports.ON_SUBMIT = ON_SUBMIT;
 	exports.onSubmit = onSubmit;
 	exports.NEW_GAME = NEW_GAME;
 	exports.newGame = newGame;
+	exports.FETCH_FEWEST_GUESSES_SUCCESS = FETCH_FEWEST_GUESSES_SUCCESS;
+	exports.fetchFewestGuessesSuccess = fetchFewestGuessesSuccess;
+	exports.FETCH_FEWEST_GUESSES_ERROR = FETCH_FEWEST_GUESSES_ERROR;
+	exports.fetchFewestGuessesError = fetchFewestGuessesError;
+	exports.fetchGuesses = fetchGuesses;
 
 /***/ },
 /* 200 */

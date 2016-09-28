@@ -23,7 +23,6 @@ var gameReducer = function(state, action) {
       var counter = 0;
       var guessLists = state.guesses.concat(action.guess);
       console.log('what is guessLists', guessLists);
-      console.log('what is feedback', feedback);
       action.guess = parseInt(action.guess);
       if(action.guess === state.generateRandomNumber) {
         correctGuess = true;
