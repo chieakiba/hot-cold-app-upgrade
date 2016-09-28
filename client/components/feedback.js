@@ -4,14 +4,14 @@ var connect = require('react-redux').connect;
 var Feedback = React.createClass({
   render: function() {
     return (
-      <h2 id="feedback">{this.props.msg}</h2>
+      <h2 id="feedback">{this.props.feedback}</h2>
     );
   }
 });
 
 var mapStateToProps = function(state, props) {
   return {
-    msg: state.msg
+    feedback: state.feedback
   };
 };
 

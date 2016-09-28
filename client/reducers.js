@@ -19,31 +19,32 @@ var gameReducer = function(state, action) {
   switch(action.type) {
     case actions.ON_SUBMIT:
       var correctGuess = false;
-      var msg;
+      var feedback;
       var counter = 0;
       var guessLists = state.guesses.concat(action.guess);
       console.log('what is guessLists', guessLists);
+      console.log('what is feedback', feedback);
       action.guess = parseInt(action.guess);
       if(action.guess === state.generateRandomNumber) {
         correctGuess = true;
-        msg = 'Correct! Click "New Game" to play again.';
+        feedback = 'Correct! Click "New Game" to play again.';
       } else if (state.generateRandomNumber - 1 <= action.guess && state.generateRandomNumber + 10 >= action.guess) {
         correctGuess = false;
-        msg = 'Hot!';
+        feedback = 'Hot!';
         counter;
       } else if (state.generateRandomNumber - 11 <= action.guess && state.generateRandomNumber + 20 >= action.guess) {
         correctGuess = false;
-        msg = 'Warmer';
+        feedback = 'Warmer';
       } else if (state.generateRandomNumber - 21 <= action.guess && state.generateRandomNumber + 30 >= action.guess) {
         correctGuess = false;
-        msg = 'Cold!';
+        feedback = 'Cold!';
         counter;
       } else {
-        msg = 'Very Cold!';
+        feedback = 'Very Cold!';
       }
       counter = state.counter + 1;
       if (isNaN(action.guess)) {
-        msg = 'Please enter a number!';
+        feedback = 'Please enter a number!';
       } else {
         guessLists;
         counter;
@@ -51,7 +52,7 @@ var gameReducer = function(state, action) {
       return Object.assign({}, state, {
         guesses: guessLists,
         counter: counter,
-        msg: msg
+        feedback: feedback
       });
     break;
 

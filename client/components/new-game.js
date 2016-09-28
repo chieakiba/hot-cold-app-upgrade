@@ -13,7 +13,7 @@ var NewGame = React.createClass({
             <div>
                 <button type='button' onClick={this.onClick}>New Game</button>
             </div>
-        )
+        );
     }
 });
 
