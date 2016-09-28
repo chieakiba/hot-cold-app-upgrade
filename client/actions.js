@@ -35,28 +35,29 @@ var fetchFewestGuessesError = function (fewestGuesses, error) {
   };
 };
 
-var fetchGuesses = function (fewestGuesses) {
-  return function(dispatch) {
-    var url = 'http://localhost:8080/fewest-guesses';
-    return fetch(url).then(function(response) {
-      if (response.status < 200 || response.status >= 300) {
-        var error = new Error(response.statusText)
-        error.response = response
-        throw error;
-      }
-      return response;
-    })
-    .then(function(response) {
-      return response.json();
-    })
-    .then(function(data) {
-      var fewestGuesses = data[0].bestScore;
-      return dispatch(fetchFewestGuessesSuccess(fewestGuesses));
-    })
-    .catch(function(error) {
-      return dispatch(fetchFewestGuessesError(fewestGuesses, error));
-    });
-  }
+var fetchGuesses = function(fewestGuesses) {
+    return function(dispatch) {
+        var url = 'http://localhost:8080/fewest-guesses';
+        return fetch(url).then(function(response) {
+            if (response.status < 200 || response.status >= 300) {
+               var error = new Error(response.statusText)
+               error.response = response
+               throw error;
+           }
+           return response.json();
+       })
+       .then(function(data) {
+           var fewestGuesses = data[0].bestScore;
+           return dispatch(
+               fetchFewestGuessesSuccess(fewestGuesses)
+           )
+       })
+       .catch(function(error) {
+           return dispatch(
+               fetchFewestGuessesError(fewestGuesses, error)
+           )
+       })
+    }
 };
 
 var POST_FEWEST_GUESSES_SUCCESS = 'POST_FEWEST_GUESSES_SUCCESS';

@@ -5,6 +5,7 @@ var actions = require('../actions');
 var UserInput = require('./user-input');
 var Guess = require('./guess');
 var Feedback = require('./feedback');
+var NewGame = require('./new-game');
 
 var Game = React.createClass({
   render: function () {
@@ -13,6 +14,7 @@ var Game = React.createClass({
         <Feedback />
         <UserInput />
         <Guess />
+        <NewGame />
       </div>
     );
   }

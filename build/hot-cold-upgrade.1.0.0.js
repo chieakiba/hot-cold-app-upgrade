@@ -23229,8 +23229,6 @@
 	        error.response = response;
 	        throw error;
 	      }
-	      return response;
-	    }).then(function (response) {
 	      return response.json();
 	    }).then(function (data) {
 	      var fewestGuesses = data[0].bestScore;
@@ -23757,6 +23755,7 @@
 	var UserInput = __webpack_require__(203);
 	var Guess = __webpack_require__(204);
 	var Feedback = __webpack_require__(205);
+	var NewGame = __webpack_require__(206);
 	
 	var Game = React.createClass({
 	  displayName: 'Game',
@@ -23767,7 +23766,8 @@
 	      null,
 	      React.createElement(Feedback, null),
 	      React.createElement(UserInput, null),
-	      React.createElement(Guess, null)
+	      React.createElement(Guess, null),
+	      React.createElement(NewGame, null)
 	    );
 	  }
 	});
@@ -23824,14 +23824,13 @@
 	
 	var React = __webpack_require__(1);
 	var connect = __webpack_require__(172).connect;
-	
 	var actions = __webpack_require__(199);
 	
 	var Guess = React.createClass({
 	  displayName: 'Guess',
 	
 	  componentDidMount: function componentDidMount() {
-	    this.props.dispatch(actions.fetchGuesses(this.props.counter));
+	    this.props.dispatch(actions.fetchGuesses(this.props.fewestGuesses));
 	  },
 	  render: function render(props) {
 	    var guesses = [];
@@ -23849,7 +23848,7 @@
 	        'p',
 	        null,
 	        'Fewest Guesses thus far: ',
-	        this.props.bestScore.counter
+	        this.props.fewestGuesses
 	      ),
 	      React.createElement(
 	        'p',
@@ -23909,6 +23908,38 @@
 	};
 	
 	var Container = connect(mapStateToProps)(Feedback);
+	module.exports = Container;
+
+/***/ },
+/* 206 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var actions = __webpack_require__(199);
+	var connect = __webpack_require__(172).connect;
+	
+	var NewGame = React.createClass({
+	    displayName: 'NewGame',
+	
+	    onClick: function onClick() {
+	        this.props.dispatch(actions.newGame());
+	    },
+	    render: function render() {
+	        return React.createElement(
+	            'div',
+	            null,
+	            React.createElement(
+	                'button',
+	                { type: 'button', onClick: this.onClick },
+	                'New Game'
+	            )
+	        );
+	    }
+	});
+	
+	var Container = connect()(NewGame);
 	module.exports = Container;
 
 /***/ }
