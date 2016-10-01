@@ -10,33 +10,35 @@ app.use(express.static('build'));
 var Guesses = require('./models/guesses');
 
 app.get('/fewest-guesses', function (req, res) {
-  Guesses.find(function (err, bestScore) {
+  Guesses.find(function (err, fewestGuesses) {
     if (err) {
       return res.status(500).json({
         message: 'Internal Server Error'
       });
     }
-    res.json(bestScore);
-    console.log(bestScore);
+    res.json(fewestGuesses);
+    console.log(fewestGuesses);
   });
 });
 
 app.post('/fewest-guesses', function (req, res) {
-  Guesses.findOne(function(err, bestScore) {
-    if (parseInt(bestScore) > parseInt(req.body.currentUserScore)) {
+  Guesses.findOne(function(err, fewestGuesses) {
+    if (parseInt(fewestGuesses) > parseInt(req.body.currentUserScore)) {
       Guesses.update({
-        bestScore: req.body.currentUserScore
+        $set: {fewestGuesses: req.body.currentUserScore}
       },
-      function (err, bestScore) {
+      function (err, fewestGuesses) {
         if (err) {
           return res.status(500).json({
             message: 'Internal Server Error'
           });
         }
-        res.status(201).json(bestScore);
+        res.status(201).json(fewestGuesses);
+        console.log('what is best score', fewestGuesses);
       });
     } else {
-      res.status(201).json(bestScore);
+      res.status(201).json(fewestGuesses);
+      console.log('what is best score', fewestGuesses);
     }
   });
 });

@@ -11,32 +11,31 @@ var onSubmit = function (guess, counter) {
 };
 
 var NEW_GAME = 'NEW_GAME';
-var newGame = function (bestScore) {
+var newGame = function (game) {
   return {
     type: NEW_GAME,
-    game: game,
-    bestScore: bestScore
+    game: game
   }
 };
 
 var FETCH_FEWEST_GUESSES_SUCCESS = 'FETCH_FEWEST_GUESSES_SUCCESS';
-var fetchFewestGuessesSuccess = function(fewestUserGuesses) {
+var fetchFewestGuessesSuccess = function(fewestGuesses) {
   return {
     type: FETCH_FEWEST_GUESSES_SUCCESS,
-    fewestUserGuesses: fewestUserGuesses
+    fewestGuesses: fewestGuesses
   };
 };
 
 var FETCH_FEWEST_GUESSES_ERROR = 'FETCH_FEWEST_GUESSES_ERROR';
-var fetchFewestGuessesError = function(fewestUserGuesses, error) {
+var fetchFewestGuessesError = function(fewestGuesses, error) {
   return {
     type: FETCH_FEWEST_GUESSES_ERROR,
-    fewestUserGuesses: fewestUserGuesses,
+    fewestGuesses: fewestGuesses,
     error: error
   };
 };
 
-var fetchGuesses = function (fewestUserGuesses) {
+var fetchGuesses = function (fewestGuesses) {
   return function (dispatch) {
     var url = 'http://localhost:8080/fewest-guesses';
     return fetch(url).then(function(res) {
@@ -45,31 +44,31 @@ var fetchGuesses = function (fewestUserGuesses) {
         error.res = res;
         throw error;
       }
-      return res.json(fewestUserGuesses);
+      return res.json(fewestGuesses);
     })
     .then(function (data) {
-      var fewestUserGuesses = data[0].bestScore;
-      return dispatch(fetchFewestGuessesSuccess(fewestUserGuesses));
+      var fewestGuesses = data[0].bestScore;
+      return dispatch(fetchFewestGuessesSuccess(fewestGuesses));
     })
     .catch(function (error) {
-      return dispatch(fetchFewestGuessesError(fewestUserGuesses, error));
+      return dispatch(fetchFewestGuessesError(fewestGuesses, error));
     });
   }
 };
 
 var POST_FEWEST_GUESSES_SUCCESS = 'POST_FEWEST_GUESSES_SUCCESS';
-var postFewestGuessesSuccess = function(newScore) {
+var postFewestGuessesSuccess = function(currentUserScore) {
   return {
     type: POST_FEWEST_GUESSES_SUCCESS,
-    newScore: newScore
+    currentUserScore: currentUserScore
   };
 };
 
 var POST_FEWEST_GUESSES_ERROR = 'POST_FEWEST_GUESSES_ERROR';
-var postFewestGuessesError = function(newScore, error) {
+var postFewestGuessesError = function(currentUserScore, error) {
   return {
     type: POST_FEWEST_GUESSES_ERROR,
-    newScore: newScore,
+    currentUserScore: currentUserScore,
     error: error
   };
 };
