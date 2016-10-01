@@ -8,8 +8,8 @@ var initialGameState = {
   counter: 0,
   feedback: "Make your Guess!",
   userGuess: '',
-  bestScore: '',
-  currentUserScore: 0
+  bestScore: 0,
+  currentUserScore: 0,
 };
 
 console.log(initialGameState);
@@ -20,7 +20,7 @@ var gameReducer = function(state, action) {
     case actions.ON_SUBMIT:
       var correctGuess = false;
       var feedback;
-      var counter = 0;
+      var counter = state.counter + 1;
       var guessLists = state.guesses.concat(action.guess);
       console.log('what is guessLists', guessLists);
       action.guess = parseInt(action.guess);
@@ -30,21 +30,24 @@ var gameReducer = function(state, action) {
       } else if (state.generateRandomNumber - 1 <= action.guess && state.generateRandomNumber + 10 >= action.guess) {
         correctGuess = false;
         feedback = 'Hot!';
-        counter;
       } else if (state.generateRandomNumber - 11 <= action.guess && state.generateRandomNumber + 20 >= action.guess) {
         correctGuess = false;
         feedback = 'Warmer';
       } else if (state.generateRandomNumber - 21 <= action.guess && state.generateRandomNumber + 30 >= action.guess) {
         correctGuess = false;
         feedback = 'Cold!';
-        counter;
       } else {
         feedback = 'Very Cold!';
       }
-      counter = state.counter + 1;
-      bestScore = guessLists.length;
+
       if (isNaN(action.guess)) {
         feedback = 'Please enter a number!';
+        counter = state.counter - 1;
+        guessList = state.guesses.pop();
+      } else if (!parseInt(action.guess)) {
+        feedback = 'Please enter a whole number!';
+        counter = state.counter - 1;
+        guessList.pop();
       } else {
         guessLists;
         counter;
@@ -53,7 +56,7 @@ var gameReducer = function(state, action) {
         guesses: guessLists,
         counter: counter,
         feedback: feedback,
-        bestScore: bestScore
+        rightGuess: correctGuess
       });
     break;
 
@@ -64,36 +67,24 @@ var gameReducer = function(state, action) {
         counter: 0,
         feedback: "New Game! Make your Guess!",
         userGuess: '',
-        bestScore: state.bestScore,
       });
       return newGame;
     break;
 
     case actions.FETCH_FEWEST_GUESSES_SUCCESS:
-      var bestScore = action.bestScore;
-      var fewestGuesses = action.guesses;
-      console.log(bestScore, fewestGuesses);
+      var bestScore = state.counter;
+      console.log(bestScore);
       var fewestUserGuesses = Object.assign({}, state, {
-        bestScore: state.bestScore,
-        guesses: state.guesses
+        bestScore: bestScore,
       });
       return fewestUserGuesses;
     break;
 
-    case actions.SAVE_FEWEST_GUESSES:
-      var saveBestScore = Object.assign({}, state, {
-        bestScore: state.bestScore,
-        guesses: state.guesses
-      });
-      return saveBestScore;
-    break;
-
     case actions.POST_FEWEST_GUESSES_SUCCESS:
-      var currentUserScore = action.bestScore;
-      var newFewestGuesses = action.guesses;
+      var currentUserScore = state.counter;
       console.log(currentUserScore);
       var newScore = Object.assign({}, state, {
-        currentUserScore: state.bestScore
+        currentUserScore: currentUserScore
       });
       console.log(newScore);
       return newScore;

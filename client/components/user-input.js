@@ -1,13 +1,17 @@
 var React = require('react');
 var connect = require('react-redux').connect;
-
+var store = require('../store');
 var actions = require('../actions');
 
 var UserInput = React.createClass({
   onClick: function (event) {
     event.preventDefault();
     this.props.dispatch(actions.onSubmit(this.refs.userGuess.value, this.props.counter));
-    var guess = this.refs.userGuess.value = '';
+    this.refs.userGuess.value = '';
+    if (store.getState().rightGuess === true) {
+      store.dispatch(actions.postGuesses(store.getState().counter))
+    }
+
   },
   render: function() {
     return (
@@ -23,7 +27,8 @@ var UserInput = React.createClass({
 
 var mapStateToProps = function(state, props) {
   return {
-    counter: state.counter
+    counter: state.counter,
+    rightGuess: state.rightGuess,
   }
 };
 

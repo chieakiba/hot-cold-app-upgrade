@@ -1,6 +1,6 @@
 var React = require('react');
 var connect = require('react-redux').connect;
-
+var store = require('../store');
 var actions = require('../actions');
 var UserInput = require('./user-input');
 var Guess = require('./guess');

@@ -23097,7 +23097,7 @@
 	  counter: 0,
 	  feedback: "Make your Guess!",
 	  userGuess: '',
-	  bestScore: '',
+	  bestScore: 0,
 	  currentUserScore: 0
 	};
 	
@@ -23109,7 +23109,7 @@
 	    case actions.ON_SUBMIT:
 	      var correctGuess = false;
 	      var feedback;
-	      var counter = 0;
+	      var counter = state.counter + 1;
 	      var guessLists = state.guesses.concat(action.guess);
 	      console.log('what is guessLists', guessLists);
 	      action.guess = parseInt(action.guess);
@@ -23119,21 +23119,24 @@
 	      } else if (state.generateRandomNumber - 1 <= action.guess && state.generateRandomNumber + 10 >= action.guess) {
 	        correctGuess = false;
 	        feedback = 'Hot!';
-	        counter;
 	      } else if (state.generateRandomNumber - 11 <= action.guess && state.generateRandomNumber + 20 >= action.guess) {
 	        correctGuess = false;
 	        feedback = 'Warmer';
 	      } else if (state.generateRandomNumber - 21 <= action.guess && state.generateRandomNumber + 30 >= action.guess) {
 	        correctGuess = false;
 	        feedback = 'Cold!';
-	        counter;
 	      } else {
 	        feedback = 'Very Cold!';
 	      }
-	      counter = state.counter + 1;
-	      bestScore = guessLists.length;
+	
 	      if (isNaN(action.guess)) {
 	        feedback = 'Please enter a number!';
+	        counter = state.counter - 1;
+	        guessList = state.guesses.pop();
+	      } else if (!parseInt(action.guess)) {
+	        feedback = 'Please enter a whole number!';
+	        counter = state.counter - 1;
+	        guessList.pop();
 	      } else {
 	        guessLists;
 	        counter;
@@ -23142,7 +23145,7 @@
 	        guesses: guessLists,
 	        counter: counter,
 	        feedback: feedback,
-	        bestScore: bestScore
+	        rightGuess: correctGuess
 	      });
 	      break;
 	
@@ -23152,37 +23155,25 @@
 	        guesses: [],
 	        counter: 0,
 	        feedback: "New Game! Make your Guess!",
-	        userGuess: '',
-	        bestScore: state.bestScore
+	        userGuess: ''
 	      });
 	      return newGame;
 	      break;
 	
 	    case actions.FETCH_FEWEST_GUESSES_SUCCESS:
-	      var bestScore = action.bestScore;
-	      var fewestGuesses = action.guesses;
-	      console.log(bestScore, fewestGuesses);
+	      var bestScore = state.counter;
+	      console.log(bestScore);
 	      var fewestUserGuesses = Object.assign({}, state, {
-	        bestScore: state.bestScore,
-	        guesses: state.guesses
+	        bestScore: bestScore
 	      });
 	      return fewestUserGuesses;
 	      break;
 	
-	    case actions.SAVE_FEWEST_GUESSES:
-	      var saveBestScore = Object.assign({}, state, {
-	        bestScore: state.bestScore,
-	        guesses: state.guesses
-	      });
-	      return saveBestScore;
-	      break;
-	
 	    case actions.POST_FEWEST_GUESSES_SUCCESS:
-	      var currentUserScore = action.bestScore;
-	      var newFewestGuesses = action.guesses;
+	      var currentUserScore = state.counter;
 	      console.log(currentUserScore);
 	      var newScore = Object.assign({}, state, {
-	        currentUserScore: state.bestScore
+	        currentUserScore: currentUserScore
 	      });
 	      console.log(newScore);
 	      return newScore;
@@ -23199,10 +23190,14 @@
 
 	'use strict';
 	
-	//Actions.js is what I want to happen when a user clicks the components on the page. This doesn't have any logic in it so it won't be able to do anything. It will send that it's been fired up to the reducers and the reducers will handle the logic (what to do) from there.
-	__webpack_require__(200);
+	var _isomorphicFetch = __webpack_require__(200);
 	
-	var ON_SUBMIT = 'ON_SUBMIT';
+	var _isomorphicFetch2 = _interopRequireDefault(_isomorphicFetch);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var ON_SUBMIT = 'ON_SUBMIT'; //Actions.js is what I want to happen when a user clicks the components on the page. This doesn't have any logic in it so it won't be able to do anything. It will send that it's been fired up to the reducers and the reducers will handle the logic (what to do) from there.
+	
 	var onSubmit = function onSubmit(guess, counter) {
 	  return {
 	    type: ON_SUBMIT,
@@ -23212,61 +23207,87 @@
 	};
 	
 	var NEW_GAME = 'NEW_GAME';
-	var newGame = function newGame(game) {
+	var newGame = function newGame(bestScore) {
 	  return {
 	    type: NEW_GAME,
-	    game: game
+	    game: game,
+	    bestScore: bestScore
 	  };
 	};
 	
 	var FETCH_FEWEST_GUESSES_SUCCESS = 'FETCH_FEWEST_GUESSES_SUCCESS';
-	var fetchFewestGuessesSuccess = function fetchFewestGuessesSuccess(guesses, bestScore) {
+	var fetchFewestGuessesSuccess = function fetchFewestGuessesSuccess(fewestUserGuesses) {
 	  return {
 	    type: FETCH_FEWEST_GUESSES_SUCCESS,
-	    guesses: guesses,
-	    bestScore: bestScore
+	    fewestUserGuesses: fewestUserGuesses
 	  };
 	};
 	
 	var FETCH_FEWEST_GUESSES_ERROR = 'FETCH_FEWEST_GUESSES_ERROR';
-	var fetchFewestGuessesError = function fetchFewestGuessesError(guesses, bestScore, error) {
+	var fetchFewestGuessesError = function fetchFewestGuessesError(fewestUserGuesses, error) {
 	  return {
 	    type: FETCH_FEWEST_GUESSES_ERROR,
-	    guesses: guesses,
-	    bestScore: bestScore,
+	    fewestUserGuesses: fewestUserGuesses,
 	    error: error
 	  };
 	};
 	
-	var SAVE_FEWEST_GUESSES = 'SAVE_FEWEST_GUESSES';
-	var saveFewestGuesses = function saveFewestGuesses(guesses, bestScore) {
-	  return {
-	    type: SAVE_FEWEST_GUESSES,
-	    guesses: guesses,
-	    bestScore: bestScore
-	  };
-	};
-	
-	var fetchGuesses = function fetchGuesses(guesses, bestScore) {
+	var fetchGuesses = function fetchGuesses(fewestUserGuesses) {
 	  return function (dispatch) {
-	    var url = 'http://localhost:8080/';
-	    return fetch(url).then(function (res) {
+	    var url = 'http://localhost:8080/fewest-guesses';
+	    return (0, _isomorphicFetch2.default)(url).then(function (res) {
 	      if (res.status < 200 || res.status >= 300) {
 	        var error = new Error(res.statusText);
 	        error.res = res;
 	        throw error;
 	      }
-	      return res;
-	    }).then(function (res) {
-	      return res.json();
+	      return res.json(fewestUserGuesses);
 	    }).then(function (data) {
-	      var guesses = data.guesses;
-	      var bestScore = data.bestScore;
-	      return;
-	      dispatch(fetchFewestGuessesSuccess(guesses, bestScore));
+	      var fewestUserGuesses = data[0].bestScore;
+	      return dispatch(fetchFewestGuessesSuccess(fewestUserGuesses));
 	    }).catch(function (error) {
-	      return;
-	      dispatch(fetchFewestGuessesError(guesses, bestScore, error));
+	      return dispatch(fetchFewestGuessesError(fewestUserGuesses, error));
+	    });
+	  };
+	};
+	
+	var POST_FEWEST_GUESSES_SUCCESS = 'POST_FEWEST_GUESSES_SUCCESS';
+	var postFewestGuessesSuccess = function postFewestGuessesSuccess(newScore) {
+	  return {
+	    type: POST_FEWEST_GUESSES_SUCCESS,
+	    newScore: newScore
+	  };
+	};
+	
+	var POST_FEWEST_GUESSES_ERROR = 'POST_FEWEST_GUESSES_ERROR';
+	var postFewestGuessesError = function postFewestGuessesError(newScore, error) {
+	  return {
+	    type: POST_FEWEST_GUESSES_ERROR,
+	    newScore: newScore,
+	    error: error
+	  };
+	};
+	
+	var postGuesses = function postGuesses(currentUserScore) {
+	  return function (dispatch) {
+	    var url = 'http://localhost:8080/fewest-guesses';
+	    return (0, _isomorphicFetch2.default)(url, {
+	      method: 'post',
+	      headers: {
+	        'content-type': 'application/json'
+	      },
+	      body: JSON.stringify({ currentUserScore: currentUserScore })
+	    }).then(function (res) {
+	      if (res.status < 200 || res.status >= 300) {
+	        var error = new Error(res.statusText);
+	        error.res = res;
+	        throw error;
+	      }
+	      return res.json({ currentUserScore: currentUserScore });
+	    }).then(function (data) {
+	      return dispatch(postFewestGuessesSuccess(currentUserScore));
+	    }).catch(function (error) {
+	      return dispatch(postFewestGuessesError(currentUserScore, error));
 	    });
 	  };
 	};
@@ -23279,9 +23300,12 @@
 	exports.fetchFewestGuessesSuccess = fetchFewestGuessesSuccess;
 	exports.FETCH_FEWEST_GUESSES_ERROR = FETCH_FEWEST_GUESSES_ERROR;
 	exports.fetchFewestGuessesError = fetchFewestGuessesError;
-	exports.SAVE_FEWEST_GUESSES = SAVE_FEWEST_GUESSES;
-	exports.saveFewestGuesses = saveFewestGuesses;
 	exports.fetchGuesses = fetchGuesses;
+	exports.POST_FEWEST_GUESSES_SUCCESS = POST_FEWEST_GUESSES_SUCCESS;
+	exports.postFewestGuessesSuccess;
+	exports.POST_FEWEST_GUESSES_ERROR = POST_FEWEST_GUESSES_ERROR;
+	exports.postFewestGuessesError = postFewestGuessesError;
+	exports.postGuesses = postGuesses;
 
 /***/ },
 /* 200 */
@@ -23742,7 +23766,7 @@
 	
 	var React = __webpack_require__(1);
 	var connect = __webpack_require__(172).connect;
-	
+	var store = __webpack_require__(196);
 	var actions = __webpack_require__(199);
 	var UserInput = __webpack_require__(203);
 	var Guess = __webpack_require__(204);
@@ -23774,7 +23798,7 @@
 	
 	var React = __webpack_require__(1);
 	var connect = __webpack_require__(172).connect;
-	
+	var store = __webpack_require__(196);
 	var actions = __webpack_require__(199);
 	
 	var UserInput = React.createClass({
@@ -23783,7 +23807,10 @@
 	  onClick: function onClick(event) {
 	    event.preventDefault();
 	    this.props.dispatch(actions.onSubmit(this.refs.userGuess.value, this.props.counter));
-	    var guess = this.refs.userGuess.value = '';
+	    this.refs.userGuess.value = '';
+	    if (store.getState().rightGuess === true) {
+	      store.dispatch(actions.postGuesses(store.getState().counter));
+	    }
 	  },
 	  render: function render() {
 	    return React.createElement(
@@ -23801,7 +23828,8 @@
 	
 	var mapStateToProps = function mapStateToProps(state, props) {
 	  return {
-	    counter: state.counter
+	    counter: state.counter,
+	    rightGuess: state.rightGuess
 	  };
 	};
 	
@@ -23822,7 +23850,7 @@
 	  displayName: 'Guess',
 	
 	  componentDidMount: function componentDidMount() {
-	    this.props.dispatch(actions.fetchGuesses(this.props.bestScore));
+	    this.props.dispatch(actions.fetchGuesses(this.props.fewestUserGuesses));
 	  },
 	  render: function render(props) {
 	    var guesses = [];
@@ -23843,7 +23871,7 @@
 	        React.createElement(
 	          'span',
 	          { ref: 'fewestGuesses' },
-	          this.props.bestScore
+	          this.props.fewestUserGuesses
 	        )
 	      ),
 	      React.createElement(
@@ -23868,7 +23896,7 @@
 	
 	var mapStateToProps = function mapStateToProps(state, props) {
 	  return {
-	    bestScore: state.bestScore,
+	    fewestGuesses: state.fewestUserGuesses,
 	    counter: state.counter,
 	    guessLists: state.guesses
 	  };

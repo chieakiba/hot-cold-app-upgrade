@@ -1,5 +1,5 @@
 //Actions.js is what I want to happen when a user clicks the components on the page. This doesn't have any logic in it so it won't be able to do anything. It will send that it's been fired up to the reducers and the reducers will handle the logic (what to do) from there.
-require('isomorphic-fetch');
+import fetch from 'isomorphic-fetch';
 
 var ON_SUBMIT = 'ON_SUBMIT';
 var onSubmit = function (guess, counter) {
@@ -11,64 +11,92 @@ var onSubmit = function (guess, counter) {
 };
 
 var NEW_GAME = 'NEW_GAME';
-var newGame = function (game) {
+var newGame = function (bestScore) {
   return {
     type: NEW_GAME,
-    game: game
+    game: game,
+    bestScore: bestScore
   }
 };
 
 var FETCH_FEWEST_GUESSES_SUCCESS = 'FETCH_FEWEST_GUESSES_SUCCESS';
-var fetchFewestGuessesSuccess = function(guesses, bestScore) {
+var fetchFewestGuessesSuccess = function(fewestUserGuesses) {
   return {
     type: FETCH_FEWEST_GUESSES_SUCCESS,
-    guesses: guesses,
-    bestScore: bestScore
+    fewestUserGuesses: fewestUserGuesses
   };
 };
 
 var FETCH_FEWEST_GUESSES_ERROR = 'FETCH_FEWEST_GUESSES_ERROR';
-var fetchFewestGuessesError = function(guesses, bestScore, error) {
+var fetchFewestGuessesError = function(fewestUserGuesses, error) {
   return {
     type: FETCH_FEWEST_GUESSES_ERROR,
-    guesses: guesses,
-    bestScore: bestScore,
+    fewestUserGuesses: fewestUserGuesses,
     error: error
   };
 };
 
-var SAVE_FEWEST_GUESSES = 'SAVE_FEWEST_GUESSES';
-var saveFewestGuesses = function(guesses, bestScore) {
-  return {
-    type: SAVE_FEWEST_GUESSES,
-    guesses: guesses,
-    bestScore: bestScore
-  };
-};
-
-var fetchGuesses = function (guesses, bestScore) {
+var fetchGuesses = function (fewestUserGuesses) {
   return function (dispatch) {
-    var url = 'http://localhost:8080/';
+    var url = 'http://localhost:8080/fewest-guesses';
     return fetch(url).then(function(res) {
       if (res.status < 200 || res.status >= 300) {
         var error = new Error(res.statusText);
         error.res = res;
         throw error;
       }
-      return res;
-    })
-    .then(function (res) {
-      return res.json();
+      return res.json(fewestUserGuesses);
     })
     .then(function (data) {
-      var guesses = data.guesses;
-      var bestScore = data.bestScore;
-      return
-      dispatch(fetchFewestGuessesSuccess(guesses, bestScore));
+      var fewestUserGuesses = data[0].bestScore;
+      return dispatch(fetchFewestGuessesSuccess(fewestUserGuesses));
     })
     .catch(function (error) {
-      return
-      dispatch(fetchFewestGuessesError(guesses, bestScore, error));
+      return dispatch(fetchFewestGuessesError(fewestUserGuesses, error));
+    });
+  }
+};
+
+var POST_FEWEST_GUESSES_SUCCESS = 'POST_FEWEST_GUESSES_SUCCESS';
+var postFewestGuessesSuccess = function(newScore) {
+  return {
+    type: POST_FEWEST_GUESSES_SUCCESS,
+    newScore: newScore
+  };
+};
+
+var POST_FEWEST_GUESSES_ERROR = 'POST_FEWEST_GUESSES_ERROR';
+var postFewestGuessesError = function(newScore, error) {
+  return {
+    type: POST_FEWEST_GUESSES_ERROR,
+    newScore: newScore,
+    error: error
+  };
+};
+
+var postGuesses = function(currentUserScore) {
+  return function(dispatch) {
+    var url = 'http://localhost:8080/fewest-guesses';
+    return fetch(url, {
+      method: 'post',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({currentUserScore})
+    })
+    .then(function(res) {
+      if (res.status < 200 || res.status >= 300) {
+        var error = new Error(res.statusText);
+        error.res = res;
+        throw error;
+      }
+      return res.json({currentUserScore});
+    })
+    .then(function(data) {
+      return dispatch(postFewestGuessesSuccess(currentUserScore));
+    })
+    .catch(function (error) {
+      return dispatch(postFewestGuessesError(currentUserScore, error));
     });
   }
 };
@@ -81,6 +109,9 @@ exports.FETCH_FEWEST_GUESSES_SUCCESS = FETCH_FEWEST_GUESSES_SUCCESS;
 exports.fetchFewestGuessesSuccess = fetchFewestGuessesSuccess;
 exports.FETCH_FEWEST_GUESSES_ERROR = FETCH_FEWEST_GUESSES_ERROR;
 exports.fetchFewestGuessesError = fetchFewestGuessesError;
-exports.SAVE_FEWEST_GUESSES = SAVE_FEWEST_GUESSES;
-exports.saveFewestGuesses = saveFewestGuesses;
 exports.fetchGuesses = fetchGuesses;
+exports.POST_FEWEST_GUESSES_SUCCESS = POST_FEWEST_GUESSES_SUCCESS;
+exports.postFewestGuessesSuccess;
+exports.POST_FEWEST_GUESSES_ERROR = POST_FEWEST_GUESSES_ERROR;
+exports.postFewestGuessesError = postFewestGuessesError;
+exports.postGuesses = postGuesses;
