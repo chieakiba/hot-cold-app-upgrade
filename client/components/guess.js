@@ -15,7 +15,7 @@ var Guess = React.createClass({
     });
     return (
       <div>
-        <p>Best Score:<span ref="bestScore">{this.props.bestScore}</span></p>
+        <p>Best Score:<span ref="fewestGuesses">{this.props.bestScore}</span></p>
         <p>Guess #<span ref="guessCounter" id="count">{this.props.counter}</span>!</p>
   			<ul id="guessList" className="guessBox clearfix">{guessLists}</ul>
       </div>

@@ -27,7 +27,6 @@ var gameReducer = function(state, action) {
       if(action.guess === state.generateRandomNumber) {
         correctGuess = true;
         feedback = 'Correct! Click "New Game" to play again.';
-        bestScore = counter;
       } else if (state.generateRandomNumber - 1 <= action.guess && state.generateRandomNumber + 10 >= action.guess) {
         correctGuess = false;
         feedback = 'Hot!';
@@ -43,6 +42,7 @@ var gameReducer = function(state, action) {
         feedback = 'Very Cold!';
       }
       counter = state.counter + 1;
+      bestScore = guessLists.length;
       if (isNaN(action.guess)) {
         feedback = 'Please enter a number!';
       } else {
@@ -52,7 +52,8 @@ var gameReducer = function(state, action) {
       return Object.assign({}, state, {
         guesses: guessLists,
         counter: counter,
-        feedback: feedback
+        feedback: feedback,
+        bestScore: bestScore
       });
     break;
 
@@ -70,18 +71,26 @@ var gameReducer = function(state, action) {
 
     case actions.FETCH_FEWEST_GUESSES_SUCCESS:
       var bestScore = action.bestScore;
-      var fewestGuesses = state.guesses.concat(action.guess);
+      var fewestGuesses = action.guesses;
       console.log(bestScore, fewestGuesses);
-      var fewestUserGuess = Object.assign({}, state, {
+      var fewestUserGuesses = Object.assign({}, state, {
         bestScore: state.bestScore,
-        guess: state.guesses
+        guesses: state.guesses
       });
-      return fewestUserGuess;
+      return fewestUserGuesses;
+    break;
+
+    case actions.SAVE_FEWEST_GUESSES:
+      var saveBestScore = Object.assign({}, state, {
+        bestScore: state.bestScore,
+        guesses: state.guesses
+      });
+      return saveBestScore;
     break;
 
     case actions.POST_FEWEST_GUESSES_SUCCESS:
       var currentUserScore = action.bestScore;
-      var newFewestGuesses = state.guesses.concat(action.guess);
+      var newFewestGuesses = action.guesses;
       console.log(currentUserScore);
       var newScore = Object.assign({}, state, {
         currentUserScore: state.bestScore

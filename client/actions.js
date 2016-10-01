@@ -19,34 +19,34 @@ var newGame = function (game) {
 };
 
 var FETCH_FEWEST_GUESSES_SUCCESS = 'FETCH_FEWEST_GUESSES_SUCCESS';
-var fetchFewestGuessesSuccess = function(guess, bestScore) {
+var fetchFewestGuessesSuccess = function(guesses, bestScore) {
   return {
     type: FETCH_FEWEST_GUESSES_SUCCESS,
-    guess: guess,
+    guesses: guesses,
     bestScore: bestScore
   };
 };
 
 var FETCH_FEWEST_GUESSES_ERROR = 'FETCH_FEWEST_GUESSES_ERROR';
-var fetchFewestGuessesError = function(guess, bestScore, error) {
+var fetchFewestGuessesError = function(guesses, bestScore, error) {
   return {
     type: FETCH_FEWEST_GUESSES_ERROR,
-    guess: guess,
+    guesses: guesses,
     bestScore: bestScore,
     error: error
   };
 };
 
 var SAVE_FEWEST_GUESSES = 'SAVE_FEWEST_GUESSES';
-var saveFewestGuesses = function(guess, bestScore) {
+var saveFewestGuesses = function(guesses, bestScore) {
   return {
     type: SAVE_FEWEST_GUESSES,
-    guess: guess,
+    guesses: guesses,
     bestScore: bestScore
   };
 };
 
-var fetchGuesses = function (guess, bestScore) {
+var fetchGuesses = function (guesses, bestScore) {
   return function (dispatch) {
     var url = 'http://localhost:8080/';
     return fetch(url).then(function(res) {
@@ -61,14 +61,14 @@ var fetchGuesses = function (guess, bestScore) {
       return res.json();
     })
     .then(function (data) {
-      var guess = data.guess;
+      var guesses = data.guesses;
       var bestScore = data.bestScore;
       return
-      dispatch(fetchFewestGuessesSuccess(guess, bestScore));
+      dispatch(fetchFewestGuessesSuccess(guesses, bestScore));
     })
     .catch(function (error) {
       return
-      dispatch(fetchFewestGuessesError(guess, bestScore, error));
+      dispatch(fetchFewestGuessesError(guesses, bestScore, error));
     });
   }
 };

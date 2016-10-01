@@ -23116,7 +23116,6 @@
 	      if (action.guess === state.generateRandomNumber) {
 	        correctGuess = true;
 	        feedback = 'Correct! Click "New Game" to play again.';
-	        bestScore = counter;
 	      } else if (state.generateRandomNumber - 1 <= action.guess && state.generateRandomNumber + 10 >= action.guess) {
 	        correctGuess = false;
 	        feedback = 'Hot!';
@@ -23132,6 +23131,7 @@
 	        feedback = 'Very Cold!';
 	      }
 	      counter = state.counter + 1;
+	      bestScore = guessLists.length;
 	      if (isNaN(action.guess)) {
 	        feedback = 'Please enter a number!';
 	      } else {
@@ -23141,7 +23141,8 @@
 	      return Object.assign({}, state, {
 	        guesses: guessLists,
 	        counter: counter,
-	        feedback: feedback
+	        feedback: feedback,
+	        bestScore: bestScore
 	      });
 	      break;
 	
@@ -23159,18 +23160,26 @@
 	
 	    case actions.FETCH_FEWEST_GUESSES_SUCCESS:
 	      var bestScore = action.bestScore;
-	      var fewestGuesses = state.guesses.concat(action.guess);
+	      var fewestGuesses = action.guesses;
 	      console.log(bestScore, fewestGuesses);
-	      var fewestUserGuess = Object.assign({}, state, {
+	      var fewestUserGuesses = Object.assign({}, state, {
 	        bestScore: state.bestScore,
-	        guess: state.guesses
+	        guesses: state.guesses
 	      });
-	      return fewestUserGuess;
+	      return fewestUserGuesses;
+	      break;
+	
+	    case actions.SAVE_FEWEST_GUESSES:
+	      var saveBestScore = Object.assign({}, state, {
+	        bestScore: state.bestScore,
+	        guesses: state.guesses
+	      });
+	      return saveBestScore;
 	      break;
 	
 	    case actions.POST_FEWEST_GUESSES_SUCCESS:
 	      var currentUserScore = action.bestScore;
-	      var newFewestGuesses = state.guesses.concat(action.guess);
+	      var newFewestGuesses = action.guesses;
 	      console.log(currentUserScore);
 	      var newScore = Object.assign({}, state, {
 	        currentUserScore: state.bestScore
@@ -23211,34 +23220,34 @@
 	};
 	
 	var FETCH_FEWEST_GUESSES_SUCCESS = 'FETCH_FEWEST_GUESSES_SUCCESS';
-	var fetchFewestGuessesSuccess = function fetchFewestGuessesSuccess(guess, bestScore) {
+	var fetchFewestGuessesSuccess = function fetchFewestGuessesSuccess(guesses, bestScore) {
 	  return {
 	    type: FETCH_FEWEST_GUESSES_SUCCESS,
-	    guess: guess,
+	    guesses: guesses,
 	    bestScore: bestScore
 	  };
 	};
 	
 	var FETCH_FEWEST_GUESSES_ERROR = 'FETCH_FEWEST_GUESSES_ERROR';
-	var fetchFewestGuessesError = function fetchFewestGuessesError(guess, bestScore, error) {
+	var fetchFewestGuessesError = function fetchFewestGuessesError(guesses, bestScore, error) {
 	  return {
 	    type: FETCH_FEWEST_GUESSES_ERROR,
-	    guess: guess,
+	    guesses: guesses,
 	    bestScore: bestScore,
 	    error: error
 	  };
 	};
 	
 	var SAVE_FEWEST_GUESSES = 'SAVE_FEWEST_GUESSES';
-	var saveFewestGuesses = function saveFewestGuesses(guess, bestScore) {
+	var saveFewestGuesses = function saveFewestGuesses(guesses, bestScore) {
 	  return {
 	    type: SAVE_FEWEST_GUESSES,
-	    guess: guess,
+	    guesses: guesses,
 	    bestScore: bestScore
 	  };
 	};
 	
-	var fetchGuesses = function fetchGuesses(guess, bestScore) {
+	var fetchGuesses = function fetchGuesses(guesses, bestScore) {
 	  return function (dispatch) {
 	    var url = 'http://localhost:8080/';
 	    return fetch(url).then(function (res) {
@@ -23251,13 +23260,13 @@
 	    }).then(function (res) {
 	      return res.json();
 	    }).then(function (data) {
-	      var guess = data.guess;
+	      var guesses = data.guesses;
 	      var bestScore = data.bestScore;
 	      return;
-	      dispatch(fetchFewestGuessesSuccess(guess, bestScore));
+	      dispatch(fetchFewestGuessesSuccess(guesses, bestScore));
 	    }).catch(function (error) {
 	      return;
-	      dispatch(fetchFewestGuessesError(guess, bestScore, error));
+	      dispatch(fetchFewestGuessesError(guesses, bestScore, error));
 	    });
 	  };
 	};
@@ -23833,7 +23842,7 @@
 	        'Best Score:',
 	        React.createElement(
 	          'span',
-	          { ref: 'bestScore' },
+	          { ref: 'fewestGuesses' },
 	          this.props.bestScore
 	        )
 	      ),
