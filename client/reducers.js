@@ -27,6 +27,7 @@ var gameReducer = function(state, action) {
       if(action.guess === state.generateRandomNumber) {
         correctGuess = true;
         feedback = 'Correct! Click "New Game" to play again.';
+        bestScore = counter;
       } else if (state.generateRandomNumber - 1 <= action.guess && state.generateRandomNumber + 10 >= action.guess) {
         correctGuess = false;
         feedback = 'Hot!';
@@ -69,18 +70,19 @@ var gameReducer = function(state, action) {
 
     case actions.FETCH_FEWEST_GUESSES_SUCCESS:
       var bestScore = action.bestScore;
-      var fewestGuesses = action.guess;
+      var fewestGuesses = state.guesses.concat(action.guess);
       console.log(bestScore, fewestGuesses);
       var fewestUserGuess = Object.assign({}, state, {
-        bestScore: state.bestScore
+        bestScore: state.bestScore,
+        guess: state.guesses
       });
       return fewestUserGuess;
     break;
 
     case actions.POST_FEWEST_GUESSES_SUCCESS:
-      bestScore = state.bestScore;
-      console.log(bestScore);
       var currentUserScore = action.bestScore;
+      var newFewestGuesses = state.guesses.concat(action.guess);
+      console.log(currentUserScore);
       var newScore = Object.assign({}, state, {
         currentUserScore: state.bestScore
       });

@@ -37,26 +37,34 @@ var fetchFewestGuessesError = function(guess, bestScore, error) {
   };
 };
 
+var SAVE_FEWEST_GUESSES = 'SAVE_FEWEST_GUESSES';
+var saveFewestGuesses = function(guess, bestScore) {
+  return {
+    type: SAVE_FEWEST_GUESSES,
+    guess: guess,
+    bestScore: bestScore
+  };
+};
+
 var fetchGuesses = function (guess, bestScore) {
   return function (dispatch) {
     var url = 'http://localhost:8080/';
     return fetch(url).then(function(res) {
       if (res.status < 200 || res.status >= 300) {
-        var error = new
-        Error(res.statusText)
-        error.res = res
+        var error = new Error(res.statusText);
+        error.res = res;
         throw error;
       }
       return res;
     })
     .then(function (res) {
-      return res.json(guess, bestScore);
+      return res.json();
     })
     .then(function (data) {
       var guess = data.guess;
       var bestScore = data.bestScore;
       return
-      dispatch(fetchFewestGuessesSuccess(bestScore));
+      dispatch(fetchFewestGuessesSuccess(guess, bestScore));
     })
     .catch(function (error) {
       return
@@ -73,4 +81,6 @@ exports.FETCH_FEWEST_GUESSES_SUCCESS = FETCH_FEWEST_GUESSES_SUCCESS;
 exports.fetchFewestGuessesSuccess = fetchFewestGuessesSuccess;
 exports.FETCH_FEWEST_GUESSES_ERROR = FETCH_FEWEST_GUESSES_ERROR;
 exports.fetchFewestGuessesError = fetchFewestGuessesError;
+exports.SAVE_FEWEST_GUESSES = SAVE_FEWEST_GUESSES;
+exports.saveFewestGuesses = saveFewestGuesses;
 exports.fetchGuesses = fetchGuesses;

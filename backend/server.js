@@ -12,7 +12,7 @@ var bestScore;
 
 app.get('/fewest-guesses', function (req, res) {
   Guesses.find(function (err, guess, bestScore) {
-    console.log(guess, guesses);
+    console.log(guess, guesses, bestScore);
     if (err) {
       return res.status(500).json({
         message: 'Internal Server Error'

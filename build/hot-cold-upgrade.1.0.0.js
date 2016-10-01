@@ -23116,6 +23116,7 @@
 	      if (action.guess === state.generateRandomNumber) {
 	        correctGuess = true;
 	        feedback = 'Correct! Click "New Game" to play again.';
+	        bestScore = counter;
 	      } else if (state.generateRandomNumber - 1 <= action.guess && state.generateRandomNumber + 10 >= action.guess) {
 	        correctGuess = false;
 	        feedback = 'Hot!';
@@ -23158,18 +23159,19 @@
 	
 	    case actions.FETCH_FEWEST_GUESSES_SUCCESS:
 	      var bestScore = action.bestScore;
-	      var fewestGuesses = action.guess;
+	      var fewestGuesses = state.guesses.concat(action.guess);
 	      console.log(bestScore, fewestGuesses);
 	      var fewestUserGuess = Object.assign({}, state, {
-	        bestScore: state.bestScore
+	        bestScore: state.bestScore,
+	        guess: state.guesses
 	      });
 	      return fewestUserGuess;
 	      break;
 	
 	    case actions.POST_FEWEST_GUESSES_SUCCESS:
-	      bestScore = state.bestScore;
-	      console.log(bestScore);
 	      var currentUserScore = action.bestScore;
+	      var newFewestGuesses = state.guesses.concat(action.guess);
+	      console.log(currentUserScore);
 	      var newScore = Object.assign({}, state, {
 	        currentUserScore: state.bestScore
 	      });
@@ -23227,6 +23229,15 @@
 	  };
 	};
 	
+	var SAVE_FEWEST_GUESSES = 'SAVE_FEWEST_GUESSES';
+	var saveFewestGuesses = function saveFewestGuesses(guess, bestScore) {
+	  return {
+	    type: SAVE_FEWEST_GUESSES,
+	    guess: guess,
+	    bestScore: bestScore
+	  };
+	};
+	
 	var fetchGuesses = function fetchGuesses(guess, bestScore) {
 	  return function (dispatch) {
 	    var url = 'http://localhost:8080/';
@@ -23238,12 +23249,12 @@
 	      }
 	      return res;
 	    }).then(function (res) {
-	      return res.json(guess, bestScore);
+	      return res.json();
 	    }).then(function (data) {
 	      var guess = data.guess;
 	      var bestScore = data.bestScore;
 	      return;
-	      dispatch(fetchFewestGuessesSuccess(bestScore));
+	      dispatch(fetchFewestGuessesSuccess(guess, bestScore));
 	    }).catch(function (error) {
 	      return;
 	      dispatch(fetchFewestGuessesError(guess, bestScore, error));
@@ -23259,6 +23270,8 @@
 	exports.fetchFewestGuessesSuccess = fetchFewestGuessesSuccess;
 	exports.FETCH_FEWEST_GUESSES_ERROR = FETCH_FEWEST_GUESSES_ERROR;
 	exports.fetchFewestGuessesError = fetchFewestGuessesError;
+	exports.SAVE_FEWEST_GUESSES = SAVE_FEWEST_GUESSES;
+	exports.saveFewestGuesses = saveFewestGuesses;
 	exports.fetchGuesses = fetchGuesses;
 
 /***/ },
