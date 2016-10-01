@@ -1,8 +1,8 @@
 var mongoose = require('mongoose');
 
 var guessesSchema = mongoose.Schema({
-  guess: Number,
-  counter: Number
+  guess: {type: Number, unique: true},
+  bestScore: {type: Number}
 });
 
 var Guesses = mongoose.model('Guesses', guessesSchema);

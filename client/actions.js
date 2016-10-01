@@ -19,27 +19,27 @@ var newGame = function (game) {
 };
 
 var FETCH_FEWEST_GUESSES_SUCCESS = 'FETCH_FEWEST_GUESSES_SUCCESS';
-var fetchFewestGuessesSuccess = function(guess, counter) {
+var fetchFewestGuessesSuccess = function(guess, bestScore) {
   return {
     type: FETCH_FEWEST_GUESSES_SUCCESS,
     guess: guess,
-    counter: counter
+    bestScore: bestScore
   };
 };
 
 var FETCH_FEWEST_GUESSES_ERROR = 'FETCH_FEWEST_GUESSES_ERROR';
-var fetchFewestGuessesError = function(guess, counter, error) {
+var fetchFewestGuessesError = function(guess, bestScore, error) {
   return {
     type: FETCH_FEWEST_GUESSES_ERROR,
     guess: guess,
-    counter: counter,
+    bestScore: bestScore,
     error: error
   };
 };
 
-var fetchGuesses = function (guess, counter) {
+var fetchGuesses = function (guess, bestScore) {
   return function (dispatch) {
-    var url = 'https://localhost:8080/';
+    var url = 'http://localhost:8080/';
     return fetch(url).then(function(res) {
       if (res.status < 200 || res.status >= 300) {
         var error = new
@@ -50,17 +50,17 @@ var fetchGuesses = function (guess, counter) {
       return res;
     })
     .then(function (res) {
-      return res.json();
+      return res.json(guess, bestScore);
     })
     .then(function (data) {
       var guess = data.guess;
-      var counter = data.counter;
+      var bestScore = data.bestScore;
       return
-      dispatch(fetchFewestGuessesSuccess(guess, counter));
+      dispatch(fetchFewestGuessesSuccess(bestScore));
     })
     .catch(function (error) {
       return
-      dispatch(fetchFewestGuessesError(guess, counter, error));
+      dispatch(fetchFewestGuessesError(guess, bestScore, error));
     });
   }
 };

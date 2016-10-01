@@ -23097,7 +23097,7 @@
 	  counter: 0,
 	  feedback: "Make your Guess!",
 	  userGuess: '',
-	  fewestGuesses: 0,
+	  bestScore: '',
 	  currentUserScore: 0
 	};
 	
@@ -23150,25 +23150,30 @@
 	        guesses: [],
 	        counter: 0,
 	        feedback: "New Game! Make your Guess!",
-	        userGuess: ''
+	        userGuess: '',
+	        bestScore: state.bestScore
 	      });
 	      return newGame;
 	      break;
 	
 	    case actions.FETCH_FEWEST_GUESSES_SUCCESS:
-	      var fewestGuesses = action.fewestGuesses;
+	      var bestScore = action.bestScore;
+	      var fewestGuesses = action.guess;
+	      console.log(bestScore, fewestGuesses);
 	      var fewestUserGuess = Object.assign({}, state, {
-	        fewestGuesses: fewestGuesses
+	        bestScore: state.bestScore
 	      });
 	      return fewestUserGuess;
 	      break;
 	
 	    case actions.POST_FEWEST_GUESSES_SUCCESS:
-	      counter = state.counter;
-	      var currentUserScore = counter;
+	      bestScore = state.bestScore;
+	      console.log(bestScore);
+	      var currentUserScore = action.bestScore;
 	      var newScore = Object.assign({}, state, {
-	        currentUserScore: currentUserScore
+	        currentUserScore: state.bestScore
 	      });
+	      console.log(newScore);
 	      return newScore;
 	      break;
 	  }
@@ -23204,27 +23209,27 @@
 	};
 	
 	var FETCH_FEWEST_GUESSES_SUCCESS = 'FETCH_FEWEST_GUESSES_SUCCESS';
-	var fetchFewestGuessesSuccess = function fetchFewestGuessesSuccess(guess, counter) {
+	var fetchFewestGuessesSuccess = function fetchFewestGuessesSuccess(guess, bestScore) {
 	  return {
 	    type: FETCH_FEWEST_GUESSES_SUCCESS,
 	    guess: guess,
-	    counter: counter
+	    bestScore: bestScore
 	  };
 	};
 	
 	var FETCH_FEWEST_GUESSES_ERROR = 'FETCH_FEWEST_GUESSES_ERROR';
-	var fetchFewestGuessesError = function fetchFewestGuessesError(guess, counter, error) {
+	var fetchFewestGuessesError = function fetchFewestGuessesError(guess, bestScore, error) {
 	  return {
 	    type: FETCH_FEWEST_GUESSES_ERROR,
 	    guess: guess,
-	    counter: counter,
+	    bestScore: bestScore,
 	    error: error
 	  };
 	};
 	
-	var fetchGuesses = function fetchGuesses(guess, counter) {
+	var fetchGuesses = function fetchGuesses(guess, bestScore) {
 	  return function (dispatch) {
-	    var url = 'https://localhost:8080/';
+	    var url = 'http://localhost:8080/';
 	    return fetch(url).then(function (res) {
 	      if (res.status < 200 || res.status >= 300) {
 	        var error = new Error(res.statusText);
@@ -23233,15 +23238,15 @@
 	      }
 	      return res;
 	    }).then(function (res) {
-	      return res.json();
+	      return res.json(guess, bestScore);
 	    }).then(function (data) {
 	      var guess = data.guess;
-	      var counter = data.counter;
+	      var bestScore = data.bestScore;
 	      return;
-	      dispatch(fetchFewestGuessesSuccess(guess, counter));
+	      dispatch(fetchFewestGuessesSuccess(bestScore));
 	    }).catch(function (error) {
 	      return;
-	      dispatch(fetchFewestGuessesError(guess, counter, error));
+	      dispatch(fetchFewestGuessesError(guess, bestScore, error));
 	    });
 	  };
 	};
@@ -23794,6 +23799,9 @@
 	var Guess = React.createClass({
 	  displayName: 'Guess',
 	
+	  componentDidMount: function componentDidMount() {
+	    this.props.dispatch(actions.fetchGuesses(this.props.bestScore));
+	  },
 	  render: function render(props) {
 	    var guesses = [];
 	    var guessLists = this.props.guessLists.map(function (guessList) {
@@ -23806,6 +23814,16 @@
 	    return React.createElement(
 	      'div',
 	      null,
+	      React.createElement(
+	        'p',
+	        null,
+	        'Best Score:',
+	        React.createElement(
+	          'span',
+	          { ref: 'bestScore' },
+	          this.props.bestScore
+	        )
+	      ),
 	      React.createElement(
 	        'p',
 	        null,
@@ -23828,6 +23846,7 @@
 	
 	var mapStateToProps = function mapStateToProps(state, props) {
 	  return {
+	    bestScore: state.bestScore,
 	    counter: state.counter,
 	    guessLists: state.guesses
 	  };
