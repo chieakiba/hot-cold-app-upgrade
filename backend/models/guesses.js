@@ -1,9 +1,9 @@
 var mongoose = require('mongoose');
 
-var guessesSchema = mongoose.Schema({
+var GuessesSchema = new mongoose.Schema({
   bestScore: {type: Number, required: true}
 });
 
-var Guesses = mongoose.model('Guesses', guessesSchema);
+var Guesses = mongoose.model('Guesses', GuessesSchema);
 
 module.exports = Guesses;

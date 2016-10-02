@@ -7,11 +7,11 @@ var UserInput = React.createClass({
   onClick: function (event) {
     event.preventDefault();
     this.props.dispatch(actions.onSubmit(this.refs.userGuess.value, this.props.counter));
-    this.refs.userGuess.value = '';
+
     if (store.getState().rightGuess === true) {
       store.dispatch(actions.postGuesses(store.getState().counter))
     }
-
+    this.refs.userGuess.value = '';
   },
   render: function() {
     return (
@@ -29,6 +29,7 @@ var mapStateToProps = function(state, props) {
   return {
     counter: state.counter,
     rightGuess: state.rightGuess,
+    fewestGuesses: state.fewestGuesses
   }
 };
 

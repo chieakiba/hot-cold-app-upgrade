@@ -23161,12 +23161,12 @@
 	
 	    case actions.FETCH_FEWEST_GUESSES_SUCCESS:
 	      var fewestGuesses = action.fewestGuesses;
-	
 	      var fewestUserGuesses = Object.assign({}, state, {
 	        fewestGuesses: fewestGuesses
 	      });
-	      console.log(fewestGuesses);
+	
 	      return fewestUserGuesses;
+	      console.log(fewestGuesses);
 	      console.log(fewestUserGuesses);
 	      break;
 	
@@ -23241,7 +23241,7 @@
 	        error.res = res;
 	        throw error;
 	      }
-	      return res.json(fewestGuesses);
+	      return res.json();
 	    }).then(function (data) {
 	      var fewestGuesses = data[0].bestScore;
 	      return dispatch(fetchFewestGuessesSuccess(fewestGuesses));
@@ -23273,9 +23273,6 @@
 	    var url = 'http://localhost:8080/fewest-guesses';
 	    return (0, _isomorphicFetch2.default)(url, {
 	      method: 'post',
-	      headers: {
-	        'content-type': 'application/json'
-	      },
 	      body: JSON.stringify({ currentUserScore: currentUserScore })
 	    }).then(function (res) {
 	      if (res.status < 200 || res.status >= 300) {
@@ -23283,7 +23280,7 @@
 	        error.res = res;
 	        throw error;
 	      }
-	      return res.json({ currentUserScore: currentUserScore });
+	      return res.json({});
 	    }).then(function (data) {
 	      return dispatch(postFewestGuessesSuccess(currentUserScore));
 	    }).catch(function (error) {
@@ -23807,10 +23804,11 @@
 	  onClick: function onClick(event) {
 	    event.preventDefault();
 	    this.props.dispatch(actions.onSubmit(this.refs.userGuess.value, this.props.counter));
-	    this.refs.userGuess.value = '';
+	
 	    if (store.getState().rightGuess === true) {
 	      store.dispatch(actions.postGuesses(store.getState().counter));
 	    }
+	    this.refs.userGuess.value = '';
 	  },
 	  render: function render() {
 	    return React.createElement(
@@ -23829,7 +23827,8 @@
 	var mapStateToProps = function mapStateToProps(state, props) {
 	  return {
 	    counter: state.counter,
-	    rightGuess: state.rightGuess
+	    rightGuess: state.rightGuess,
+	    fewestGuesses: state.fewestGuesses
 	  };
 	};
 	
@@ -23850,7 +23849,7 @@
 	  displayName: 'Guess',
 	
 	  componentDidMount: function componentDidMount() {
-	    this.props.dispatch(actions.fetchGuesses(this.props.fewestUserGuesses));
+	    this.props.dispatch(actions.fetchGuesses(this.props.fewestGuesses));
 	  },
 	  render: function render(props) {
 	    var guesses = [];
@@ -23871,7 +23870,7 @@
 	        React.createElement(
 	          'span',
 	          { ref: 'fewestGuesses' },
-	          this.props.fewestUserGuesses
+	          this.props.fewestGuesses
 	        )
 	      ),
 	      React.createElement(
@@ -23896,7 +23895,7 @@
 	
 	var mapStateToProps = function mapStateToProps(state, props) {
 	  return {
-	    fewestGuesses: state.fewestUserGuesses,
+	    fewestGuesses: state.fewestGuesses,
 	    counter: state.counter,
 	    guessLists: state.guesses
 	  };

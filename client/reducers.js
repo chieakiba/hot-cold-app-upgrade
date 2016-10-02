@@ -65,19 +65,19 @@ var gameReducer = function(state, action) {
         generateRandomNumber: Math.floor(Math.random() * 100) + 1,
         guesses: [],
         counter: 0,
-        feedback: "New Game! Make your Guess!",
+        feedback: "New Game! Make your Guess!"
       });
       return newGame;
     break;
 
     case actions.FETCH_FEWEST_GUESSES_SUCCESS:
       var fewestGuesses = action.fewestGuesses;
-
       var fewestUserGuesses = Object.assign({}, state, {
         fewestGuesses: fewestGuesses,
       });
-      console.log(fewestGuesses);
+
       return fewestUserGuesses;
+      console.log(fewestGuesses);
       console.log(fewestUserGuesses);
     break;
 

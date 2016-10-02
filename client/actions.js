@@ -44,7 +44,7 @@ var fetchGuesses = function (fewestGuesses) {
         error.res = res;
         throw error;
       }
-      return res.json(fewestGuesses);
+      return res.json();
     })
     .then(function (data) {
       var fewestGuesses = data[0].bestScore;
@@ -78,9 +78,6 @@ var postGuesses = function(currentUserScore) {
     var url = 'http://localhost:8080/fewest-guesses';
     return fetch(url, {
       method: 'post',
-      headers: {
-        'content-type': 'application/json'
-      },
       body: JSON.stringify({currentUserScore})
     })
     .then(function(res) {
@@ -89,7 +86,7 @@ var postGuesses = function(currentUserScore) {
         error.res = res;
         throw error;
       }
-      return res.json({currentUserScore});
+      return res.json({});
     })
     .then(function(data) {
       return dispatch(postFewestGuessesSuccess(currentUserScore));
