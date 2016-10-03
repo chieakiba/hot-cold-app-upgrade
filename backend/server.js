@@ -8,19 +8,20 @@ app.use(bodyParser.json());
 app.use(express.static('build'));
 
 var Guesses = require('./models/guesses');
-var bestScore;
+var fewestGuesses;
 
 app.get('/fewest-guesses', function (req, res) {
   Guesses.create({
-    bestScore: req.body.bestScore
-  }, function (err, bestScore) {
+    fewestGuesses: req.body.fewestGuesses
+  },
+  function (err, fewestGuesses) {
     if (err) {
       return res.status(500).json({
         message: 'Internal Server Error'
       });
     }
-    res.json(bestScore);
-    console.log(bestScore);
+    res.json(fewestGuesses);
+    console.log(fewestGuesses);
   });
 });
 
@@ -39,25 +40,25 @@ app.get('/fewest-guesses', function (req, res) {
 // });
 
 app.post('/fewest-guesses', function (req, res) {
-  Guesses.find({"bestScore": bestScore}, function(err, bestScore) {
-    console.log('what is bestScore', bestScore);
+  Guesses.find({"fewestGuesses": fewestGuesses}, function(err, fewestGuesses) {
+    console.log('what is fewestGuesses', fewestGuesses);
     console.log('what is req.body', req.body);
-    if (parseInt(bestScore.bestScore) > parseInt(req.body.currentUserScore)) {
+    if (parseInt(fewestGuesses.fewestGuesses) > parseInt(req.body.currentUserScore)) {
       Guesses.update({
-        $set: {bestScore: req.body.currentUserScore}
+        $set: {fewestGuesses: req.body.currentUserScore}
       },
-      function (err, bestScore) {
+      function (err, fewestGuesses) {
         if (err) {
           return res.status(500).json({
             message: 'Internal Server Error'
           });
         }
-        res.status(201).json(bestScore);
-        console.log('what is best score first one', bestScore);
+        res.status(201).json(fewestGuesses);
+        console.log('what is fewestGuesses first one', fewestGuesses);
       });
     } else {
-      res.status(201).json(bestScore);
-      console.log('what is best score second one', bestScore);
+      res.status(201).json(fewestGuesses);
+      console.log('what is fewestGuesses second one', fewestGuesses);
     }
   });
 });
