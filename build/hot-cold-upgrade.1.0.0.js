@@ -23097,7 +23097,7 @@
 	  counter: 0,
 	  feedback: "Make your Guess!",
 	  userGuess: '',
-	  fewestGuesses: 0,
+	  fewestGuesses: 15,
 	  currentUserScore: 0
 	};
 	
@@ -23160,7 +23160,7 @@
 	      break;
 	
 	    case actions.FETCH_FEWEST_GUESSES_SUCCESS:
-	      var fewestGuesses = state.counter;
+	      var fewestGuesses = action.fewestGuesses;
 	      console.log(fewestGuesses);
 	      var fewestUserGuesses = Object.assign({}, state, {
 	        fewestGuesses: fewestGuesses
@@ -23171,7 +23171,7 @@
 	      break;
 	
 	    case actions.POST_FEWEST_GUESSES_SUCCESS:
-	      var currentUserScore = action.currentUserScore;
+	      var currentUserScore = state.counter;
 	      console.log(currentUserScore);
 	      var newScore = Object.assign({}, state, {
 	        currentUserScore: currentUserScore
@@ -23238,6 +23238,9 @@
 	    console.log('what is fewestGuesses', fewestGuesses);
 	    return (0, _isomorphicFetch2.default)(url, {
 	      method: 'get',
+	      headers: {
+	        'Content-Type': 'application/json'
+	      },
 	      body: JSON.stringify({ "fewestGuesses": fewestGuesses })
 	    }).then(function (res) {
 	      if (res.status < 200 || res.status >= 300) {
@@ -23276,7 +23279,10 @@
 	    var url = 'http://localhost:8080/fewest-guesses';
 	    console.log('what is currentUserScore', currentUserScore);
 	    return (0, _isomorphicFetch2.default)(url, {
-	      method: 'put',
+	      method: 'post',
+	      headers: {
+	        'Content-Type': 'application/json'
+	      },
 	      //below doesn't have key-value pair
 	      body: JSON.stringify({ "currentUserScore": currentUserScore })
 	    }).then(function (res) {
@@ -23810,6 +23816,8 @@
 	    event.preventDefault();
 	    this.props.dispatch(actions.onSubmit(this.refs.userGuess.value, this.props.counter));
 	
+	    console.log('store.getState()', store.getState());
+	
 	    if (store.getState().rightGuess === true) {
 	      store.dispatch(actions.postGuesses(store.getState().counter));
 	    }
@@ -23833,7 +23841,7 @@
 	  return {
 	    counter: state.counter,
 	    rightGuess: state.rightGuess,
-	    fewestGuesses: state.fewestGuesses
+	    currentUserScore: state.currentUserScore
 	  };
 	};
 	
