@@ -38,16 +38,20 @@ var fetchFewestGuessesError = function(fewestGuesses, error) {
 var fetchGuesses = function (fewestGuesses) {
   return function (dispatch) {
     var url = 'http://localhost:8080/fewest-guesses';
-    return fetch(url).then(function(res) {
+    console.log('what is fewestGuesses', fewestGuesses);
+    return fetch(url, {
+      method: 'get',
+      body: JSON.stringify({fewestGuesses: fewestGuesses})
+    })
+    .then(function(res) {
       if (res.status < 200 || res.status >= 300) {
         var error = new Error(res.statusText);
         error.res = res;
         throw error;
       }
-      return res.json();
+      return res.json({});
     })
     .then(function (data) {
-      var fewestGuesses = data[0].bestScore;
       return dispatch(fetchFewestGuessesSuccess(fewestGuesses));
     })
     .catch(function (error) {
@@ -76,9 +80,11 @@ var postFewestGuessesError = function(currentUserScore, error) {
 var postGuesses = function(currentUserScore) {
   return function(dispatch) {
     var url = 'http://localhost:8080/fewest-guesses';
+    console.log('what is currentUserScore', currentUserScore);
     return fetch(url, {
       method: 'post',
-      body: JSON.stringify({currentUserScore})
+      //below doesn't have key-value pair
+      body: JSON.stringify({"currentUserScore": currentUserScore})
     })
     .then(function(res) {
       if (res.status < 200 || res.status >= 300) {

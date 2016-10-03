@@ -23160,18 +23160,18 @@
 	      break;
 	
 	    case actions.FETCH_FEWEST_GUESSES_SUCCESS:
-	      var fewestGuesses = action.fewestGuesses;
+	      var fewestGuesses = state.counter;
+	      console.log(fewestGuesses);
 	      var fewestUserGuesses = Object.assign({}, state, {
 	        fewestGuesses: fewestGuesses
 	      });
-	
 	      return fewestUserGuesses;
-	      console.log(fewestGuesses);
+	
 	      console.log(fewestUserGuesses);
 	      break;
 	
 	    case actions.POST_FEWEST_GUESSES_SUCCESS:
-	      var currentUserScore = state.counter;
+	      var currentUserScore = action.currentUserScore;
 	      console.log(currentUserScore);
 	      var newScore = Object.assign({}, state, {
 	        currentUserScore: currentUserScore
@@ -23235,15 +23235,18 @@
 	var fetchGuesses = function fetchGuesses(fewestGuesses) {
 	  return function (dispatch) {
 	    var url = 'http://localhost:8080/fewest-guesses';
-	    return (0, _isomorphicFetch2.default)(url).then(function (res) {
+	    console.log('what is fewestGuesses', fewestGuesses);
+	    return (0, _isomorphicFetch2.default)(url, {
+	      method: 'get',
+	      body: JSON.stringify({ fewestGuesses: fewestGuesses })
+	    }).then(function (res) {
 	      if (res.status < 200 || res.status >= 300) {
 	        var error = new Error(res.statusText);
 	        error.res = res;
 	        throw error;
 	      }
-	      return res.json();
+	      return res.json({});
 	    }).then(function (data) {
-	      var fewestGuesses = data[0].bestScore;
 	      return dispatch(fetchFewestGuessesSuccess(fewestGuesses));
 	    }).catch(function (error) {
 	      return dispatch(fetchFewestGuessesError(fewestGuesses, error));
@@ -23271,9 +23274,11 @@
 	var postGuesses = function postGuesses(currentUserScore) {
 	  return function (dispatch) {
 	    var url = 'http://localhost:8080/fewest-guesses';
+	    console.log('what is currentUserScore', currentUserScore);
 	    return (0, _isomorphicFetch2.default)(url, {
 	      method: 'post',
-	      body: JSON.stringify({ currentUserScore: currentUserScore })
+	      //below doesn't have key-value pair
+	      body: JSON.stringify({ "currentUserScore": currentUserScore })
 	    }).then(function (res) {
 	      if (res.status < 200 || res.status >= 300) {
 	        var error = new Error(res.statusText);
