@@ -41,7 +41,7 @@ var fetchGuesses = function (fewestGuesses) {
     console.log('what is fewestGuesses', fewestGuesses);
     return fetch(url, {
       method: 'get',
-      body: JSON.stringify(fewestGuesses)
+      body: JSON.stringify({"fewestGuesses": fewestGuesses})
     })
     .then(function(res) {
       if (res.status < 200 || res.status >= 300) {
@@ -82,9 +82,9 @@ var postGuesses = function(currentUserScore) {
     var url = 'http://localhost:8080/fewest-guesses';
     console.log('what is currentUserScore', currentUserScore);
     return fetch(url, {
-      method: 'post',
+      method: 'put',
       //below doesn't have key-value pair
-      body: JSON.stringify(currentUserScore)
+      body: JSON.stringify({"currentUserScore": currentUserScore})
     })
     .then(function(res) {
       if (res.status < 200 || res.status >= 300) {

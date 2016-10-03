@@ -23238,7 +23238,7 @@
 	    console.log('what is fewestGuesses', fewestGuesses);
 	    return (0, _isomorphicFetch2.default)(url, {
 	      method: 'get',
-	      body: JSON.stringify(fewestGuesses)
+	      body: JSON.stringify({ "fewestGuesses": fewestGuesses })
 	    }).then(function (res) {
 	      if (res.status < 200 || res.status >= 300) {
 	        var error = new Error(res.statusText);
@@ -23276,9 +23276,9 @@
 	    var url = 'http://localhost:8080/fewest-guesses';
 	    console.log('what is currentUserScore', currentUserScore);
 	    return (0, _isomorphicFetch2.default)(url, {
-	      method: 'post',
+	      method: 'put',
 	      //below doesn't have key-value pair
-	      body: JSON.stringify(currentUserScore)
+	      body: JSON.stringify({ "currentUserScore": currentUserScore })
 	    }).then(function (res) {
 	      if (res.status < 200 || res.status >= 300) {
 	        var error = new Error(res.statusText);
