@@ -23162,14 +23162,14 @@
 	    case actions.FETCH_FEWEST_GUESSES_SUCCESS:
 	      console.log(fewestGuesses);
 	      var fewestUserGuesses = Object.assign({}, state, {
-	        fewestGuesses: state.counter
+	        fewestGuesses: action.fewestGuesses
 	      });
 	      return fewestUserGuesses;
 	      break;
 	
 	    case actions.POST_FEWEST_GUESSES_SUCCESS:
 	      var newScore = Object.assign({}, state, {
-	        currentUserScore: action.currentUserScore
+	        currentUserScore: state.counter
 	      });
 	      return newScore;
 	      break;
@@ -23235,7 +23235,7 @@
 	      headers: {
 	        'Content-Type': 'application/json'
 	      },
-	      body: JSON.stringify({ "fewestGuesses": fewestGuesses })
+	      body: JSON.stringify({ fewestGuesses: fewestGuesses })
 	    }).then(function (res) {
 	      if (res.status < 200 || res.status >= 300) {
 	        var error = new Error(res.statusText);
@@ -23277,7 +23277,7 @@
 	      headers: {
 	        'Content-Type': 'application/json'
 	      },
-	      body: JSON.stringify({ "currentUserScore": currentUserScore })
+	      body: JSON.stringify({ currentUserScore: currentUserScore })
 	    }).then(function (res) {
 	      if (res.status < 200 || res.status >= 300) {
 	        var error = new Error(res.statusText);
@@ -23809,8 +23809,12 @@
 	    event.preventDefault();
 	    this.props.dispatch(actions.onSubmit(this.refs.userGuess.value, this.props.counter));
 	
+	    console.log('store.getState()', store.getState());
+	
 	    if (store.getState().rightGuess === true) {
-	      this.props.dispatch(actions.postGuesses(store.getState().counter, this.props.fewestGuesses));
+	      if (parseInt(this.props.fewestGuesses) < parseInt(this.props.currentUserScore)) {
+	        store.dispatch(actions.postGuesses(store.getState().fewestGuesses, this.props.currentUserScore));
+	      }
 	    }
 	    this.refs.userGuess.value = '';
 	  },
@@ -23854,7 +23858,7 @@
 	  displayName: 'Guess',
 	
 	  componentDidMount: function componentDidMount() {
-	    this.props.dispatch(actions.fetchGuesses(this.props.counter));
+	    this.props.dispatch(actions.fetchGuesses(this.props.fewestGuesses));
 	    console.log('this.props.fewestGuesses in guess component', this.props.fewestGuesses);
 	  },
 	  render: function render(props) {

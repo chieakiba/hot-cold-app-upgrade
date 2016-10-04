@@ -73,14 +73,14 @@ var gameReducer = function(state, action) {
     case actions.FETCH_FEWEST_GUESSES_SUCCESS:
       console.log(fewestGuesses);
       var fewestUserGuesses = Object.assign({}, state, {
-        fewestGuesses: state.counter,
+        fewestGuesses: action.fewestGuesses
       });
       return fewestUserGuesses;
     break;
 
     case actions.POST_FEWEST_GUESSES_SUCCESS:
       var newScore = Object.assign({}, state, {
-        currentUserScore: action.currentUserScore
+        currentUserScore: state.counter
       });
       return newScore;
     break;

@@ -5,7 +5,7 @@ var actions = require('../actions');
 var Guess = React.createClass({
   componentDidMount: function() {
     this.props.dispatch(
-      actions.fetchGuesses(this.props.counter)
+      actions.fetchGuesses(this.props.fewestGuesses)
     );
     console.log('this.props.fewestGuesses in guess component', this.props.fewestGuesses);
   },
