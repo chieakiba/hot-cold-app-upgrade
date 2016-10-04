@@ -7,14 +7,6 @@ var NewGame = React.createClass({
         this.props.dispatch(
             actions.newGame()
         );
-
-        console.log('store.getState()', store.getState());
-
-        if (store.getState().rightGuess === true) {
-          if (parseInt(this.props.counter) < parseInt(this.props.fewestGuesses)) {
-            store.dispatch(actions.postGuesses(store.getState().counter, this.props.fewestGuesses))
-          }
-        }
     },
     render: function() {
         return(
@@ -24,15 +16,6 @@ var NewGame = React.createClass({
         );
     }
 });
-
-var mapStateToProps = function(state, props) {
-  return {
-    counter: state.counter,
-    rightGuess: state.rightGuess,
-    currentUserScore: state.currentUserScore,
-    fewestGuesses: state.fewestGuesses
-  }
-};
 
 var Container = connect()(NewGame);
 module.exports = Container;

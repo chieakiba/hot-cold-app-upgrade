@@ -23236,7 +23236,7 @@
 	      headers: {
 	        'Content-Type': 'application/json'
 	      },
-	      body: JSON.stringify({ "fewestGuesses": fewestGuesses })
+	      body: JSON.stringify({ fewestGuesses: fewestGuesses })
 	    }).then(function (res) {
 	      if (res.status < 200 || res.status >= 300) {
 	        var error = new Error(res.statusText);
@@ -23278,7 +23278,7 @@
 	      headers: {
 	        'Content-Type': 'application/json'
 	      },
-	      body: JSON.stringify({ "currentUserScore": currentUserScore })
+	      body: JSON.stringify({ currentUserScore: currentUserScore })
 	    }).then(function (res) {
 	      if (res.status < 200 || res.status >= 300) {
 	        var error = new Error(res.statusText);
@@ -23810,6 +23810,13 @@
 	    event.preventDefault();
 	    this.props.dispatch(actions.onSubmit(this.refs.userGuess.value, this.props.counter));
 	
+	    console.log('store.getState()', store.getState());
+	
+	    if (store.getState().rightGuess === true) {
+	      if (parseInt(this.props.counter) < parseInt(this.props.fewestGuesses)) {
+	        store.dispatch(actions.postGuesses(store.getState().counter, this.props.fewestGuesses));
+	      }
+	    }
 	    this.refs.userGuess.value = '';
 	  },
 	  render: function render() {
@@ -23828,7 +23835,10 @@
 	
 	var mapStateToProps = function mapStateToProps(state, props) {
 	  return {
-	    counter: state.counter
+	    counter: state.counter,
+	    rightGuess: state.rightGuess,
+	    currentUserScore: state.currentUserScore,
+	    fewestGuesses: state.fewestGuesses
 	  };
 	};
 	
@@ -23950,14 +23960,6 @@
 	
 	    onClick: function onClick() {
 	        this.props.dispatch(actions.newGame());
-	
-	        console.log('store.getState()', store.getState());
-	
-	        if (store.getState().rightGuess === true) {
-	            if (parseInt(this.props.counter) < parseInt(this.props.fewestGuesses)) {
-	                store.dispatch(actions.postGuesses(store.getState().counter, this.props.fewestGuesses));
-	            }
-	        }
 	    },
 	    render: function render() {
 	        return React.createElement(
@@ -23971,15 +23973,6 @@
 	        );
 	    }
 	});
-	
-	var mapStateToProps = function mapStateToProps(state, props) {
-	    return {
-	        counter: state.counter,
-	        rightGuess: state.rightGuess,
-	        currentUserScore: state.currentUserScore,
-	        fewestGuesses: state.fewestGuesses
-	    };
-	};
 	
 	var Container = connect()(NewGame);
 	module.exports = Container;

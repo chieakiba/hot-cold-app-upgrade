@@ -44,7 +44,7 @@ var fetchGuesses = function (fewestGuesses) {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({"fewestGuesses": fewestGuesses})
+      body: JSON.stringify({fewestGuesses})
     })
     .then(function(res) {
       if (res.status < 200 || res.status >= 300) {
@@ -89,7 +89,7 @@ var postGuesses = function(currentUserScore) {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({"currentUserScore": currentUserScore})
+      body: JSON.stringify({currentUserScore})
     })
     .then(function(res) {
       if (res.status < 200 || res.status >= 300) {

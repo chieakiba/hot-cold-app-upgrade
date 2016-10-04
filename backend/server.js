@@ -11,9 +11,10 @@ var Guesses = require('./models/guesses');
 var fewestGuesses;
 
 app.get('/fewest-guesses', function (req, res) {
-  console.log('am I fetching');
-  console.log(req.body.fewestGuesses);
-  Guesses.find(function (err, fewestGuesses) {
+  console.log('what is req', req);
+  Guesses.create({
+    fewestGuesses: req.body.fewestGuesses
+  }, function (err, fewestGuesses) {
     if (err) {
       return res.status(500).json({
         message: 'Internal Server Error'
@@ -25,8 +26,9 @@ app.get('/fewest-guesses', function (req, res) {
 
 app.post('/update-best-guess-score', function (req, res) {
   console.log('am I posting');
-  console.log('what is req', req);
-  Guesses.find(function (err, currentUserScore) {
+  console.log('what is currentUserScore', currentUserScore);
+  console.log('what is req.body', req.body);
+  Guesses.update({fewestGuesses: req.body.currentUserScore}, function (err, currentUserScore) {
     if (err) {
       return res.status(500).json({
         message: 'Internal Server Error'
