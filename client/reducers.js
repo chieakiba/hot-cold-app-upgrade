@@ -9,7 +9,7 @@ var initialGameState = {
   feedback: "Make your Guess!",
   userGuess: '',
   fewestGuesses: 0,
-  currentUserScore: 0,
+  currentUserScore: 0
 };
 
 console.log(initialGameState);
@@ -73,15 +73,14 @@ var gameReducer = function(state, action) {
     case actions.FETCH_FEWEST_GUESSES_SUCCESS:
       console.log(fewestGuesses);
       var fewestUserGuesses = Object.assign({}, state, {
-        fewestGuesses: action.fewestGuesses,
+        fewestGuesses: state.counter,
       });
       return fewestUserGuesses;
     break;
 
     case actions.POST_FEWEST_GUESSES_SUCCESS:
-      var currentUserScore = state.counter;
       var newScore = Object.assign({}, state, {
-        currentUserScore: currentUserScore
+        currentUserScore: action.currentUserScore
       });
       return newScore;
     break;

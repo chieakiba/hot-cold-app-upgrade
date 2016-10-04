@@ -2,8 +2,7 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/hot-cold-app'); // Always connect using this "kind" of url
-
+mongoose.connect('mongodb://localhost/hot-cold-app');
 app.use(bodyParser.json());
 app.use(express.static('build'));
 
@@ -11,10 +10,8 @@ var Guesses = require('./models/guesses');
 var fewestGuesses;
 
 app.get('/fewest-guesses', function (req, res) {
-  console.log('what is req', req);
-  Guesses.create({
-    fewestGuesses: req.body.fewestGuesses
-  }, function (err, fewestGuesses) {
+  console.log('req.body in app.get', req.body)
+  Guesses.find(function (err, fewestGuesses) {
     if (err) {
       return res.status(500).json({
         message: 'Internal Server Error'
@@ -24,18 +21,22 @@ app.get('/fewest-guesses', function (req, res) {
   });
 });
 
-app.post('/update-best-guess-score', function (req, res) {
-  console.log('am I posting');
-  console.log('what is currentUserScore', currentUserScore);
+app.post('/update-best-score', function (req, res) {
+  console.log('I am posting');
   console.log('what is req.body', req.body);
-  Guesses.update({fewestGuesses: req.body.currentUserScore}, function (err, currentUserScore) {
-    if (err) {
-      return res.status(500).json({
-        message: 'Internal Server Error'
+  Guesses.find(
+    if (parseInt(fewestGuesses) < parseInt(currentUserScore)) {
+      Guesses.create({
+        fewestGuesses: req.body.currentUserScore
+      }, function (err, currentUserScore) {
+        if (err) {
+          return res.status(500).json({
+            message: 'Internal Server Error'
+          });
+        }
+        res.status(201).json(currentUserScore);
       });
-    }
-    res.json(currentUserScore);
-  });
+    });
 });
 
 app.use('*', function (req, res) {

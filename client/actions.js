@@ -44,7 +44,7 @@ var fetchGuesses = function (fewestGuesses) {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({fewestGuesses})
+      body: JSON.stringify({"fewestGuesses": fewestGuesses})
     })
     .then(function(res) {
       if (res.status < 200 || res.status >= 300) {
@@ -82,14 +82,14 @@ var postFewestGuessesError = function(currentUserScore, error) {
 
 var postGuesses = function(currentUserScore) {
   return function(dispatch) {
-    var url = 'http://localhost:8080/update-best-guess-score';
+    var url = 'http://localhost:8080/update-best-score';
     console.log('what is currentUserScore', currentUserScore);
     return fetch(url, {
       method: 'post',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({currentUserScore})
+      body: JSON.stringify({"currentUserScore": currentUserScore})
     })
     .then(function(res) {
       if (res.status < 200 || res.status >= 300) {
