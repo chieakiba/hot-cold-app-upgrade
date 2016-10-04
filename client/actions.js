@@ -82,14 +82,13 @@ var postFewestGuessesError = function(currentUserScore, error) {
 
 var postGuesses = function(currentUserScore) {
   return function(dispatch) {
-    var url = 'http://localhost:8080/fewest-guesses';
+    var url = 'http://localhost:8080/update-best-guess-score';
     console.log('what is currentUserScore', currentUserScore);
     return fetch(url, {
       method: 'post',
       headers: {
         'Content-Type': 'application/json'
       },
-      //below doesn't have key-value pair
       body: JSON.stringify({"currentUserScore": currentUserScore})
     })
     .then(function(res) {

@@ -8,11 +8,6 @@ var UserInput = React.createClass({
     event.preventDefault();
     this.props.dispatch(actions.onSubmit(this.refs.userGuess.value, this.props.counter));
 
-    console.log('store.getState()', store.getState());
-
-    if (store.getState().rightGuess === true) {
-      store.dispatch(actions.postGuesses(store.getState().counter))
-    }
     this.refs.userGuess.value = '';
   },
   render: function() {
@@ -30,8 +25,6 @@ var UserInput = React.createClass({
 var mapStateToProps = function(state, props) {
   return {
     counter: state.counter,
-    rightGuess: state.rightGuess,
-    currentUserScore: state.currentUserScore
   }
 };
 

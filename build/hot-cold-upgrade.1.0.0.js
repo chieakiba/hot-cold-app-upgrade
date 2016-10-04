@@ -23097,7 +23097,7 @@
 	  counter: 0,
 	  feedback: "Make your Guess!",
 	  userGuess: '',
-	  fewestGuesses: 15,
+	  fewestGuesses: 0,
 	  currentUserScore: 0
 	};
 	
@@ -23160,23 +23160,18 @@
 	      break;
 	
 	    case actions.FETCH_FEWEST_GUESSES_SUCCESS:
-	      var fewestGuesses = action.fewestGuesses;
 	      console.log(fewestGuesses);
 	      var fewestUserGuesses = Object.assign({}, state, {
-	        fewestGuesses: fewestGuesses
+	        fewestGuesses: action.fewestGuesses
 	      });
 	      return fewestUserGuesses;
-	
-	      console.log(fewestUserGuesses);
 	      break;
 	
 	    case actions.POST_FEWEST_GUESSES_SUCCESS:
 	      var currentUserScore = state.counter;
-	      console.log(currentUserScore);
 	      var newScore = Object.assign({}, state, {
 	        currentUserScore: currentUserScore
 	      });
-	      console.log(newScore);
 	      return newScore;
 	      break;
 	  }
@@ -23276,14 +23271,13 @@
 	
 	var postGuesses = function postGuesses(currentUserScore) {
 	  return function (dispatch) {
-	    var url = 'http://localhost:8080/fewest-guesses';
+	    var url = 'http://localhost:8080/update-best-guess-score';
 	    console.log('what is currentUserScore', currentUserScore);
 	    return (0, _isomorphicFetch2.default)(url, {
 	      method: 'post',
 	      headers: {
 	        'Content-Type': 'application/json'
 	      },
-	      //below doesn't have key-value pair
 	      body: JSON.stringify({ "currentUserScore": currentUserScore })
 	    }).then(function (res) {
 	      if (res.status < 200 || res.status >= 300) {
@@ -23816,11 +23810,6 @@
 	    event.preventDefault();
 	    this.props.dispatch(actions.onSubmit(this.refs.userGuess.value, this.props.counter));
 	
-	    console.log('store.getState()', store.getState());
-	
-	    if (store.getState().rightGuess === true) {
-	      store.dispatch(actions.postGuesses(store.getState().counter));
-	    }
 	    this.refs.userGuess.value = '';
 	  },
 	  render: function render() {
@@ -23839,9 +23828,7 @@
 	
 	var mapStateToProps = function mapStateToProps(state, props) {
 	  return {
-	    counter: state.counter,
-	    rightGuess: state.rightGuess,
-	    currentUserScore: state.currentUserScore
+	    counter: state.counter
 	  };
 	};
 	
@@ -23862,6 +23849,7 @@
 	  displayName: 'Guess',
 	
 	  componentDidMount: function componentDidMount() {
+	
 	    this.props.dispatch(actions.fetchGuesses(this.props.fewestGuesses));
 	  },
 	  render: function render(props) {
@@ -23962,6 +23950,14 @@
 	
 	    onClick: function onClick() {
 	        this.props.dispatch(actions.newGame());
+	
+	        console.log('store.getState()', store.getState());
+	
+	        if (store.getState().rightGuess === true) {
+	            if (parseInt(this.props.counter) < parseInt(this.props.fewestGuesses)) {
+	                store.dispatch(actions.postGuesses(store.getState().counter, this.props.fewestGuesses));
+	            }
+	        }
 	    },
 	    render: function render() {
 	        return React.createElement(
@@ -23975,6 +23971,15 @@
 	        );
 	    }
 	});
+	
+	var mapStateToProps = function mapStateToProps(state, props) {
+	    return {
+	        counter: state.counter,
+	        rightGuess: state.rightGuess,
+	        currentUserScore: state.currentUserScore,
+	        fewestGuesses: state.fewestGuesses
+	    };
+	};
 	
 	var Container = connect()(NewGame);
 	module.exports = Container;
