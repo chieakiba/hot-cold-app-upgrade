@@ -14,8 +14,7 @@ var initialGameState = {
 
 console.log(initialGameState);
 
-var gameReducer = function(state, action) {
-  state = state || initialGameState;
+var gameReducer = function(state = initialGameState, action) {
   switch(action.type) {
     case actions.ON_SUBMIT:
       var correctGuess = false;
@@ -56,7 +55,6 @@ var gameReducer = function(state, action) {
         guesses: guessLists,
         counter: counter,
         feedback: feedback,
-        rightGuess: correctGuess
       });
     break;
 
@@ -71,16 +69,14 @@ var gameReducer = function(state, action) {
     break;
 
     case actions.FETCH_FEWEST_GUESSES_SUCCESS:
-      console.log(fewestGuesses);
-      var fewestUserGuesses = Object.assign({}, state, {
+      return  Object.assign({}, state, {
         fewestGuesses: action.fewestGuesses
       });
-      return fewestUserGuesses;
     break;
 
     case actions.POST_FEWEST_GUESSES_SUCCESS:
       var newScore = Object.assign({}, state, {
-        currentUserScore: state.counter
+        currentUserScore: action.currentUserScore
       });
       return newScore;
     break;

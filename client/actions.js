@@ -35,16 +35,14 @@ var fetchFewestGuessesError = function(fewestGuesses, error) {
   };
 };
 
-var fetchGuesses = function (fewestGuesses) {
+var fetchGuesses = function () {
   return function (dispatch) {
     var url = 'http://localhost:8080/fewest-guesses';
-    console.log('what is fewestGuesses', fewestGuesses);
     return fetch(url, {
       method: 'get',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({fewestGuesses})
     })
     .then(function(res) {
       if (res.status < 200 || res.status >= 300) {
@@ -55,41 +53,39 @@ var fetchGuesses = function (fewestGuesses) {
       return res.json({});
     })
     .then(function (data) {
-      return dispatch(fetchFewestGuessesSuccess(fewestGuesses));
+      return dispatch(fetchFewestGuessesSuccess(data));
     })
     .catch(function (error) {
-      return dispatch(fetchFewestGuessesError(fewestGuesses, error));
+      return dispatch(fetchFewestGuessesError(error));
     });
   }
 };
 
 var POST_FEWEST_GUESSES_SUCCESS = 'POST_FEWEST_GUESSES_SUCCESS';
-var postFewestGuessesSuccess = function(currentUserScore) {
+var postFewestGuessesSuccess = function(fewestGuesses) {
   return {
     type: POST_FEWEST_GUESSES_SUCCESS,
-    currentUserScore: currentUserScore
+    fewestGuesses: fewestGuesses
   };
 };
 
 var POST_FEWEST_GUESSES_ERROR = 'POST_FEWEST_GUESSES_ERROR';
-var postFewestGuessesError = function(currentUserScore, error) {
+var postFewestGuessesError = function(fewestGuesses, error) {
   return {
     type: POST_FEWEST_GUESSES_ERROR,
-    currentUserScore: currentUserScore,
+    fewestGuesses: fewestGuesses,
     error: error
   };
 };
 
-var postGuesses = function(currentUserScore) {
+var postGuesses = function() {
   return function(dispatch) {
-    var url = 'http://localhost:8080/update-best-score';
-    console.log('what is currentUserScore', currentUserScore);
+    var url = '/update-best-score';
     return fetch(url, {
       method: 'post',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({currentUserScore})
     })
     .then(function(res) {
       if (res.status < 200 || res.status >= 300) {
@@ -100,10 +96,10 @@ var postGuesses = function(currentUserScore) {
       return res.json({});
     })
     .then(function(data) {
-      return dispatch(postFewestGuessesSuccess(currentUserScore));
+      return dispatch(postFewestGuessesSuccess(data));
     })
     .catch(function (error) {
-      return dispatch(postFewestGuessesError(currentUserScore, error));
+      return dispatch(postFewestGuessesError(error));
     });
   }
 };

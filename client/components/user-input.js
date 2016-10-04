@@ -11,8 +11,8 @@ var UserInput = React.createClass({
     console.log('store.getState()', store.getState());
 
     if (store.getState().rightGuess === true) {
-      if (parseInt(this.props.fewestGuesses) < parseInt(this.props.currentUserScore)) {
-        store.dispatch(actions.postGuesses(store.getState().fewestGuesses, this.props.currentUserScore))
+      if (parseInt(store.getState().fewestGuesses) < parseInt(store.getState().currentUserScore)) {
+        store.dispatch(actions.postGuesses(store.getState().fewestGuesses, store.getState().currentUserScore))
       }
     }
     this.refs.userGuess.value = '';

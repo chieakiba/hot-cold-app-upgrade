@@ -7,7 +7,6 @@ var Guess = React.createClass({
     this.props.dispatch(
       actions.fetchGuesses(this.props.fewestGuesses)
     );
-    console.log('this.props.fewestGuesses in guess component', this.props.fewestGuesses);
   },
   render: function (props) {
     var guesses = [];

@@ -23103,8 +23103,10 @@
 	
 	console.log(initialGameState);
 	
-	var gameReducer = function gameReducer(state, action) {
-	  state = state || initialGameState;
+	var gameReducer = function gameReducer() {
+	  var state = arguments.length <= 0 || arguments[0] === undefined ? initialGameState : arguments[0];
+	  var action = arguments[1];
+	
 	  switch (action.type) {
 	    case actions.ON_SUBMIT:
 	      var correctGuess = false;
@@ -23144,8 +23146,7 @@
 	      return Object.assign({}, state, {
 	        guesses: guessLists,
 	        counter: counter,
-	        feedback: feedback,
-	        rightGuess: correctGuess
+	        feedback: feedback
 	      });
 	      break;
 	
@@ -23160,16 +23161,14 @@
 	      break;
 	
 	    case actions.FETCH_FEWEST_GUESSES_SUCCESS:
-	      console.log(fewestGuesses);
-	      var fewestUserGuesses = Object.assign({}, state, {
+	      return Object.assign({}, state, {
 	        fewestGuesses: action.fewestGuesses
 	      });
-	      return fewestUserGuesses;
 	      break;
 	
 	    case actions.POST_FEWEST_GUESSES_SUCCESS:
 	      var newScore = Object.assign({}, state, {
-	        currentUserScore: state.counter
+	        currentUserScore: action.currentUserScore
 	      });
 	      return newScore;
 	      break;
@@ -23226,16 +23225,14 @@
 	  };
 	};
 	
-	var fetchGuesses = function fetchGuesses(fewestGuesses) {
+	var fetchGuesses = function fetchGuesses() {
 	  return function (dispatch) {
 	    var url = 'http://localhost:8080/fewest-guesses';
-	    console.log('what is fewestGuesses', fewestGuesses);
 	    return (0, _isomorphicFetch2.default)(url, {
 	      method: 'get',
 	      headers: {
 	        'Content-Type': 'application/json'
-	      },
-	      body: JSON.stringify({ fewestGuesses: fewestGuesses })
+	      }
 	    }).then(function (res) {
 	      if (res.status < 200 || res.status >= 300) {
 	        var error = new Error(res.statusText);
@@ -23244,40 +23241,38 @@
 	      }
 	      return res.json({});
 	    }).then(function (data) {
-	      return dispatch(fetchFewestGuessesSuccess(fewestGuesses));
+	      return dispatch(fetchFewestGuessesSuccess(data));
 	    }).catch(function (error) {
-	      return dispatch(fetchFewestGuessesError(fewestGuesses, error));
+	      return dispatch(fetchFewestGuessesError(error));
 	    });
 	  };
 	};
 	
 	var POST_FEWEST_GUESSES_SUCCESS = 'POST_FEWEST_GUESSES_SUCCESS';
-	var postFewestGuessesSuccess = function postFewestGuessesSuccess(currentUserScore) {
+	var postFewestGuessesSuccess = function postFewestGuessesSuccess(fewestGuesses) {
 	  return {
 	    type: POST_FEWEST_GUESSES_SUCCESS,
-	    currentUserScore: currentUserScore
+	    fewestGuesses: fewestGuesses
 	  };
 	};
 	
 	var POST_FEWEST_GUESSES_ERROR = 'POST_FEWEST_GUESSES_ERROR';
-	var postFewestGuessesError = function postFewestGuessesError(currentUserScore, error) {
+	var postFewestGuessesError = function postFewestGuessesError(fewestGuesses, error) {
 	  return {
 	    type: POST_FEWEST_GUESSES_ERROR,
-	    currentUserScore: currentUserScore,
+	    fewestGuesses: fewestGuesses,
 	    error: error
 	  };
 	};
 	
-	var postGuesses = function postGuesses(currentUserScore) {
+	var postGuesses = function postGuesses() {
 	  return function (dispatch) {
-	    var url = 'http://localhost:8080/update-best-score';
-	    console.log('what is currentUserScore', currentUserScore);
+	    var url = '/update-best-score';
 	    return (0, _isomorphicFetch2.default)(url, {
 	      method: 'post',
 	      headers: {
 	        'Content-Type': 'application/json'
-	      },
-	      body: JSON.stringify({ currentUserScore: currentUserScore })
+	      }
 	    }).then(function (res) {
 	      if (res.status < 200 || res.status >= 300) {
 	        var error = new Error(res.statusText);
@@ -23286,9 +23281,9 @@
 	      }
 	      return res.json({});
 	    }).then(function (data) {
-	      return dispatch(postFewestGuessesSuccess(currentUserScore));
+	      return dispatch(postFewestGuessesSuccess(data));
 	    }).catch(function (error) {
-	      return dispatch(postFewestGuessesError(currentUserScore, error));
+	      return dispatch(postFewestGuessesError(error));
 	    });
 	  };
 	};
@@ -23812,8 +23807,8 @@
 	    console.log('store.getState()', store.getState());
 	
 	    if (store.getState().rightGuess === true) {
-	      if (parseInt(this.props.fewestGuesses) < parseInt(this.props.currentUserScore)) {
-	        store.dispatch(actions.postGuesses(store.getState().fewestGuesses, this.props.currentUserScore));
+	      if (parseInt(store.getState().fewestGuesses) < parseInt(store.getState().currentUserScore)) {
+	        store.dispatch(actions.postGuesses(store.getState().fewestGuesses, store.getState().currentUserScore));
 	      }
 	    }
 	    this.refs.userGuess.value = '';
@@ -23859,7 +23854,6 @@
 	
 	  componentDidMount: function componentDidMount() {
 	    this.props.dispatch(actions.fetchGuesses(this.props.fewestGuesses));
-	    console.log('this.props.fewestGuesses in guess component', this.props.fewestGuesses);
 	  },
 	  render: function render(props) {
 	    var guesses = [];
