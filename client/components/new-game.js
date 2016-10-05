@@ -6,6 +6,10 @@ var store = require('../store');
 var NewGame = React.createClass({
   onClick: function() {
         this.props.dispatch(actions.newGame());
+
+        if (this.props.userAttempts < this.props.bestScore) {
+          this.props.dispatch(actions.updateBestScore(this.props.userAttempts))
+        }
   },
   render: function() {
       return(
@@ -16,5 +20,12 @@ var NewGame = React.createClass({
   }
 });
 
-var Container = connect()(NewGame);
+var mapStateToProps = function(state, props) {
+  return {
+    userAttempts: state.userAttempts,
+    bestScore: state.bestScore,
+  }
+};
+
+var Container = connect(mapStateToProps)(NewGame);
 module.exports = Container;

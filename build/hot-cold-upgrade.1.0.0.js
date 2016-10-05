@@ -23765,11 +23765,6 @@
 	    this.props.dispatch(actions.onSubmit(this.refs.userGuess.value, this.props.userAttempts));
 	    this.refs.userGuess.value = '';
 	  },
-	  componentDidMount: function componentDidMount() {
-	    if (this.props.userAttempts < this.props.bestScore) {
-	      store.dispatch(actions.updateBestScore(this.props.userAttempts));
-	    }
-	  },
 	  render: function render() {
 	    return React.createElement(
 	      'div',
@@ -23905,25 +23900,36 @@
 	var store = __webpack_require__(196);
 	
 	var NewGame = React.createClass({
-	    displayName: 'NewGame',
+	  displayName: 'NewGame',
 	
-	    onClick: function onClick() {
-	        this.props.dispatch(actions.newGame());
-	    },
-	    render: function render() {
-	        return React.createElement(
-	            'div',
-	            null,
-	            React.createElement(
-	                'button',
-	                { type: 'button', onClick: this.onClick },
-	                'New Game'
-	            )
-	        );
+	  onClick: function onClick() {
+	    this.props.dispatch(actions.newGame());
+	
+	    if (this.props.userAttempts < this.props.bestScore) {
+	      this.props.dispatch(actions.updateBestScore(this.props.userAttempts));
 	    }
+	  },
+	  render: function render() {
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'button',
+	        { type: 'button', onClick: this.onClick },
+	        'New Game'
+	      )
+	    );
+	  }
 	});
 	
-	var Container = connect()(NewGame);
+	var mapStateToProps = function mapStateToProps(state, props) {
+	  return {
+	    userAttempts: state.userAttempts,
+	    bestScore: state.bestScore
+	  };
+	};
+	
+	var Container = connect(mapStateToProps)(NewGame);
 	module.exports = Container;
 
 /***/ }
