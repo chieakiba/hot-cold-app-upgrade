@@ -4,9 +4,6 @@ var actions = require('../actions');
 
 var Feedback = React.createClass({
   render: function() {
-
-    this.props.gatherFeedback(this.props.userAttempts, this.props.correctAnswer);
-
     return (
       <h2 id="feedback">{this.props.feedback}</h2>
     );
@@ -19,13 +16,13 @@ var mapStateToProps = function(state, props) {
   };
 };
 
-var mapDispatchToProps = function(dispatch) {
+var mapDispatchToProps = function () {
   return {
     gatherFeedback: function (userGuess, correctAnswer) {
-      dispatch(actions.gatherFeedback(userGuess, correctAnswer));
+      dispatch(actions.gatherFeedback(feedback));
     }
   };
 };
 
-var Container = connect(mapStateToProps)(Feedback);
+var Container = connect(mapStateToProps, mapDispatchToProps)(Feedback);
 module.exports = Container;

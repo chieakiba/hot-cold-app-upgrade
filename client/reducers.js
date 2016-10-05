@@ -1,9 +1,8 @@
-//Where logic for the actions are stored (so basically carries out the how-to part once the actions are fired up)
-//Thus need to require actions.js since it only fires when the actions are fired up
+//Reducers change the states
 var actions = require('./actions');
 
 var initialGameState = {
-  generateRandomNumber: Math.floor(Math.random() * 100) + 1,
+  correctAnswer: Math.floor(Math.random() * 100) + 1,
   guesses: [],
   userAttempts: 0,
   feedback: "Make your Guess!",
@@ -16,7 +15,6 @@ console.log(initialGameState);
 var gameReducer = function(state = initialGameState, action) {
   switch(action.type) {
     case actions.ON_SUBMIT:
-      var feedback;
       var bestScore = state.bestScore;
       var userAttempts = state.userAttempts + 1;
       var listOfUserGuesses = state.guesses.concat(action.guess);
@@ -31,7 +29,7 @@ var gameReducer = function(state = initialGameState, action) {
 
     case actions.NEW_GAME:
       var newGame = Object.assign({}, state, {
-        generateRandomNumber: Math.floor(Math.random() * 100) + 1,
+        correctAnswer: Math.floor(Math.random() * 100) + 1,
         guesses: [],
         userAttempts: 0,
         feedback: "New Game! Make your Guess!",

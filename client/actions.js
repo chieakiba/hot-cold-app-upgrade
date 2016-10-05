@@ -1,4 +1,5 @@
-//Actions.js is what I want to happen when a user clicks the components on the page. This doesn't have any logic in it so it won't be able to do anything. It will send that it's been fired up to the reducers and the reducers will handle the logic (what to do) from there.
+//Actions.js is what I want to happen when a user clicks the components on the page. This doesn't have any logic in it so it won't be able to do anything. It will send that it's been fired up to the reducers and the reducers will change the state.
+//Action applies the logic
 import fetch from 'isomorphic-fetch';
 
 var ON_SUBMIT = 'ON_SUBMIT';
@@ -14,6 +15,47 @@ var newGame = function (game) {
   return {
     type: NEW_GAME,
     game: game
+  }
+};
+
+var GATHER_FEEDBACK = 'GATHER_FEEDBACK';
+var gatherFeedback = function (feedback) {
+  return {
+    type: GATHER_FEEDBACK,
+    feedback: feedback
+  }
+};
+
+var gatherFeedback = function (userGuess, correctAnswer) {
+  if (userGuess === correctAnswer) {
+    return {
+      type: GATHER_FEEDBACK,
+      feedback: "You got it right! Play Again?"
+    }
+  }
+  else if (correctAnswer - 1 <= userGuess && userGuess + 10 >= correctAnswer) {
+    return {
+      type: GATHER_FEEDBACK,
+      feedback: "Getting hotter!"
+    }
+  }
+  else if (correctAnswer - 11 <= userGuess && userGuess + 20 >= correctAnswer) {
+    return {
+      type: GATHER_FEEDBACK,
+      feedback: "Warmer..."
+    }
+  }
+  else if (correctAnswer - 21 <= userGuess && userGuess + 30 >= correctAnswer) {
+    return {
+      type: GATHER_FEEDBACK,
+      feedback: "Cold!"
+    }
+  }
+  else {
+    return {
+      type: GATHER_FEEDBACK,
+      feedback: "Very Cold!"
+    }
   }
 };
 
@@ -57,21 +99,6 @@ var fetchBestScore = function () {
     .catch(function (error) {
       return dispatch(fetchBestScoreError(error));
     });
-  }
-};
-
-var gatherFeedback = function (usersGuess, correctAnswer) {
-  if(usersGuess === correctAnswer) {
-    return {
-      type: GATHER_FEEDBACK,
-      feedback: "Correct answer ...."
-    }
-  }
-  else if (...) {
-    return {
-      type: GATHER_FEEDBACK,
-      feedback: "A your close ...."
-    }
   }
 };
 

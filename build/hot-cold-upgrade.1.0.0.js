@@ -23087,12 +23087,11 @@
 
 	'use strict';
 	
-	//Where logic for the actions are stored (so basically carries out the how-to part once the actions are fired up)
-	//Thus need to require actions.js since it only fires when the actions are fired up
+	//Reducers change the states
 	var actions = __webpack_require__(199);
 	
 	var initialGameState = {
-	  generateRandomNumber: Math.floor(Math.random() * 100) + 1,
+	  correctAnswer: Math.floor(Math.random() * 100) + 1,
 	  guesses: [],
 	  userAttempts: 0,
 	  feedback: "Make your Guess!",
@@ -23108,7 +23107,6 @@
 	
 	  switch (action.type) {
 	    case actions.ON_SUBMIT:
-	      var feedback;
 	      var bestScore = state.bestScore;
 	      var userAttempts = state.userAttempts + 1;
 	      var listOfUserGuesses = state.guesses.concat(action.guess);
@@ -23123,7 +23121,7 @@
 	
 	    case actions.NEW_GAME:
 	      var newGame = Object.assign({}, state, {
-	        generateRandomNumber: Math.floor(Math.random() * 100) + 1,
+	        correctAnswer: Math.floor(Math.random() * 100) + 1,
 	        guesses: [],
 	        userAttempts: 0,
 	        feedback: "New Game! Make your Guess!"
@@ -23136,6 +23134,12 @@
 	        bestScore: action.bestScore
 	      });
 	      return fetchBestScoreSuccess;
+	      break;
+	
+	    case actions.GATHER_FEEDBACK:
+	      return Object.assign({}, state, {
+	        feedback: action.feedback
+	      });
 	      break;
 	  }
 	  return state;
@@ -23155,7 +23159,8 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var ON_SUBMIT = 'ON_SUBMIT'; //Actions.js is what I want to happen when a user clicks the components on the page. This doesn't have any logic in it so it won't be able to do anything. It will send that it's been fired up to the reducers and the reducers will handle the logic (what to do) from there.
+	var ON_SUBMIT = 'ON_SUBMIT'; //Actions.js is what I want to happen when a user clicks the components on the page. This doesn't have any logic in it so it won't be able to do anything. It will send that it's been fired up to the reducers and the reducers will change the state.
+	//Action applies the logic
 	
 	var onSubmit = function onSubmit(guess) {
 	  return {
@@ -23170,6 +23175,43 @@
 	    type: NEW_GAME,
 	    game: game
 	  };
+	};
+	
+	var GATHER_FEEDBACK = 'GATHER_FEEDBACK';
+	var gatherFeedback = function gatherFeedback(feedback) {
+	  return {
+	    type: GATHER_FEEDBACK,
+	    feedback: feedback
+	  };
+	};
+	
+	var gatherFeedback = function gatherFeedback(userGuess, correctAnswer) {
+	  if (userGuess === correctAnswer) {
+	    return {
+	      type: GATHER_FEEDBACK,
+	      feedback: "You got it right! Play Again?"
+	    };
+	  } else if (correctAnswer - 1 <= userGuess && userGuess + 10 >= correctAnswer) {
+	    return {
+	      type: GATHER_FEEDBACK,
+	      feedback: "Getting hotter!"
+	    };
+	  } else if (correctAnswer - 11 <= userGuess && userGuess + 20 >= correctAnswer) {
+	    return {
+	      type: GATHER_FEEDBACK,
+	      feedback: "Warmer..."
+	    };
+	  } else if (correctAnswer - 21 <= userGuess && userGuess + 30 >= correctAnswer) {
+	    return {
+	      type: GATHER_FEEDBACK,
+	      feedback: "Cold!"
+	    };
+	  } else {
+	    return {
+	      type: GATHER_FEEDBACK,
+	      feedback: "Very Cold!"
+	    };
+	  }
 	};
 	
 	var FETCH_BEST_SCORE_SUCCESS = 'FETCH_BEST_SCORE_SUCCESS';
@@ -23850,22 +23892,12 @@
 	
 	var React = __webpack_require__(1);
 	var connect = __webpack_require__(172).connect;
+	var actions = __webpack_require__(199);
 	
 	var Feedback = React.createClass({
 	  displayName: 'Feedback',
 	
 	  render: function render() {
-	    if (action.guess === state.generateRandomNumber) {
-	      feedback = 'Correct! Click "New Game" to play again.';
-	    } else if (state.generateRandomNumber - 1 <= action.guess && state.generateRandomNumber + 10 >= action.guess) {
-	      feedback = 'Hot!';
-	    } else if (state.generateRandomNumber - 11 <= action.guess && state.generateRandomNumber + 20 >= action.guess) {
-	      feedback = 'Warmer';
-	    } else if (state.generateRandomNumber - 21 <= action.guess && state.generateRandomNumber + 30 >= action.guess) {
-	      feedback = 'Cold!';
-	    } else {
-	      feedback = 'Very Cold!';
-	    }
 	    return React.createElement(
 	      'h2',
 	      { id: 'feedback' },
@@ -23880,7 +23912,15 @@
 	  };
 	};
 	
-	var Container = connect(mapStateToProps)(Feedback);
+	var mapDispatchToProps = function mapDispatchToProps() {
+	  return {
+	    gatherFeedback: function gatherFeedback(userGuess, correctAnswer) {
+	      dispatch(actions.gatherFeedback(feedback));
+	    }
+	  };
+	};
+	
+	var Container = connect(mapStateToProps, mapDispatchToProps)(Feedback);
 	module.exports = Container;
 
 /***/ },
