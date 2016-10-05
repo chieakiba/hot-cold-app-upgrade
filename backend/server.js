@@ -7,31 +7,29 @@ app.use(bodyParser.json());
 app.use(express.static('build'));
 
 var Guesses = require('./models/guesses');
-var fewestGuesses;
+var bestScore;
 
 app.get('/fewest-guesses', function (req, res) {
-  Guesses.find(function (err, fewestGuesses) {
+  Guesses.find(function (err, bestScore) {
     if (err) {
       return res.status(500).json({
         message: 'Internal Server Error'
       });
     }
-    console.log(fewestGuesses);
-    res.json(fewestGuesses);
+    res.json(bestScore);
   });
 });
 
 app.post('/update-best-score', function (req, res) {
-  console.log('what is req.body', req.body);
   Guesses.update({
-    fewestGuesses: req.body.currentUserScore
-  }, function (err, fewestGuesses) {
+    bestScore: req.body.newBestScore
+  }, function (err, bestScore) {
     if (err) {
       return res.status(500).json({
         message: 'Internal Server Error'
       });
     }
-    res.status(201).json(fewestGuesses);
+    res.status(201).json(bestScore);
   });
 });
 

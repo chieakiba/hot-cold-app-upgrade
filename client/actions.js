@@ -2,11 +2,10 @@
 import fetch from 'isomorphic-fetch';
 
 var ON_SUBMIT = 'ON_SUBMIT';
-var onSubmit = function (guess, counter) {
+var onSubmit = function (guess) {
   return {
     type: ON_SUBMIT,
     guess: guess,
-    counter: counter
   }
 };
 
@@ -18,26 +17,26 @@ var newGame = function (game) {
   }
 };
 
-var FETCH_FEWEST_GUESSES_SUCCESS = 'FETCH_FEWEST_GUESSES_SUCCESS';
-var fetchFewestGuessesSuccess = function(fewestGuesses) {
+var FETCH_BEST_SCORE_SUCCESS = 'FETCH_BEST_SCORE_SUCCESS';
+var fetchBestScoreSuccess = function (bestScore) {
   return {
-    type: FETCH_FEWEST_GUESSES_SUCCESS,
-    fewestGuesses: fewestGuesses
-  };
+    type: FETCH_BEST_SCORE_SUCCESS,
+    bestScore: bestScore
+  }
 };
 
-var FETCH_FEWEST_GUESSES_ERROR = 'FETCH_FEWEST_GUESSES_ERROR';
-var fetchFewestGuessesError = function(fewestGuesses, error) {
+var FETCH_BEST_SCORE_ERROR = 'FETCH_BEST_SCORE_ERROR';
+var fetchBestScoreError = function (bestScore, error) {
   return {
-    type: FETCH_FEWEST_GUESSES_ERROR,
-    fewestGuesses: fewestGuesses,
+    type: FETCH_BEST_SCORE_ERROR,
+    bestScore: bestScore,
     error: error
-  };
+  }
 };
 
-var fetchGuesses = function () {
+var fetchBestScore = function () {
   return function (dispatch) {
-    var url = 'http://localhost:8080/fewest-guesses';
+    var url = '/fewest-guesses';
     return fetch(url, {
       method: 'get',
       headers: {
@@ -53,39 +52,23 @@ var fetchGuesses = function () {
       return res.json({});
     })
     .then(function (data) {
-      return dispatch(fetchFewestGuessesSuccess(data));
+      return dispatch(fetchBestScoreSuccess(data[0].bestScore));
     })
     .catch(function (error) {
-      return dispatch(fetchFewestGuessesError(error));
+      return dispatch(fetchBestScoreError(error));
     });
   }
 };
 
-var POST_FEWEST_GUESSES_SUCCESS = 'POST_FEWEST_GUESSES_SUCCESS';
-var postFewestGuessesSuccess = function(fewestGuesses) {
-  return {
-    type: POST_FEWEST_GUESSES_SUCCESS,
-    fewestGuesses: fewestGuesses
-  };
-};
-
-var POST_FEWEST_GUESSES_ERROR = 'POST_FEWEST_GUESSES_ERROR';
-var postFewestGuessesError = function(fewestGuesses, error) {
-  return {
-    type: POST_FEWEST_GUESSES_ERROR,
-    fewestGuesses: fewestGuesses,
-    error: error
-  };
-};
-
-var postGuesses = function() {
-  return function(dispatch) {
+var updateBestScore = function (newBestScore) {
+  return function (dispatch) {
     var url = '/update-best-score';
     return fetch(url, {
       method: 'post',
       headers: {
         'Content-Type': 'application/json'
       },
+      body: JSON.stringify({newBestScore: newBestScore})
     })
     .then(function(res) {
       if (res.status < 200 || res.status >= 300) {
@@ -95,11 +78,11 @@ var postGuesses = function() {
       }
       return res.json({});
     })
-    .then(function(data) {
-      return dispatch(postFewestGuessesSuccess(data));
+    .then(function (data) {
+      return dispatch(fetchBestScoreSuccess(data[0].bestScore));
     })
     .catch(function (error) {
-      return dispatch(postFewestGuessesError(error));
+      return dispatch(fetchBestScoreError(error));
     });
   }
 };
@@ -108,13 +91,9 @@ exports.ON_SUBMIT = ON_SUBMIT;
 exports.onSubmit = onSubmit;
 exports.NEW_GAME = NEW_GAME;
 exports.newGame = newGame;
-exports.FETCH_FEWEST_GUESSES_SUCCESS = FETCH_FEWEST_GUESSES_SUCCESS;
-exports.fetchFewestGuessesSuccess = fetchFewestGuessesSuccess;
-exports.FETCH_FEWEST_GUESSES_ERROR = FETCH_FEWEST_GUESSES_ERROR;
-exports.fetchFewestGuessesError = fetchFewestGuessesError;
-exports.fetchGuesses = fetchGuesses;
-exports.POST_FEWEST_GUESSES_SUCCESS = POST_FEWEST_GUESSES_SUCCESS;
-exports.postFewestGuessesSuccess;
-exports.POST_FEWEST_GUESSES_ERROR = POST_FEWEST_GUESSES_ERROR;
-exports.postFewestGuessesError = postFewestGuessesError;
-exports.postGuesses = postGuesses;
+exports.FETCH_BEST_SCORE_SUCCESS = FETCH_BEST_SCORE_SUCCESS;
+exports.fetchBestScoreSuccess = fetchBestScoreSuccess;
+exports.FETCH_BEST_SCORE_ERROR = FETCH_BEST_SCORE_ERROR;
+exports.fetchBestScoreError = fetchBestScoreError;
+exports.fetchBestScore = fetchBestScore;
+exports.updateBestScore = updateBestScore;

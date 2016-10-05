@@ -5,11 +5,10 @@ var actions = require('./actions');
 var initialGameState = {
   generateRandomNumber: Math.floor(Math.random() * 100) + 1,
   guesses: [],
-  counter: 0,
+  userAttempts: 0,
   feedback: "Make your Guess!",
   userGuess: '',
-  fewestGuesses: 0,
-  currentUserScore: 0
+  bestScore: 0,
 };
 
 console.log(initialGameState);
@@ -19,9 +18,9 @@ var gameReducer = function(state = initialGameState, action) {
     case actions.ON_SUBMIT:
       var correctGuess = false;
       var feedback;
-      var counter = state.counter + 1;
-      var guessLists = state.guesses.concat(action.guess);
-      console.log('what is guessLists', guessLists);
+      var bestScore = state.bestScore;
+      var userAttempts = state.userAttempts + 1;
+      var listOfUserGuesses = state.guesses.concat(action.guess);
       action.guess = parseInt(action.guess);
       if(action.guess === state.generateRandomNumber) {
         correctGuess = true;
@@ -39,22 +38,11 @@ var gameReducer = function(state = initialGameState, action) {
         feedback = 'Very Cold!';
       }
 
-      if (isNaN(action.guess)) {
-        feedback = 'Please enter a number!';
-        counter = state.counter - 1;
-        guessList = state.guesses.pop();
-      } else if (!parseInt(action.guess)) {
-        feedback = 'Please enter a whole number!';
-        counter = state.counter - 1;
-        guessList.pop();
-      } else {
-        guessLists;
-        counter;
-      }
       return Object.assign({}, state, {
-        guesses: guessLists,
-        counter: counter,
+        guesses: listOfUserGuesses,
+        userAttempts: userAttempts,
         feedback: feedback,
+        bestScore: bestScore
       });
     break;
 
@@ -62,23 +50,17 @@ var gameReducer = function(state = initialGameState, action) {
       var newGame = Object.assign({}, state, {
         generateRandomNumber: Math.floor(Math.random() * 100) + 1,
         guesses: [],
-        counter: 0,
-        feedback: "New Game! Make your Guess!"
+        userAttempts: 0,
+        feedback: "New Game! Make your Guess!",
       });
       return newGame;
     break;
 
-    case actions.FETCH_FEWEST_GUESSES_SUCCESS:
-      return  Object.assign({}, state, {
-        fewestGuesses: action.fewestGuesses
+    case actions.FETCH_BEST_SCORE_SUCCESS:
+      var fetchBestScoreSuccess = Object.assign({}, state, {
+        bestScore: action.bestScore
       });
-    break;
-
-    case actions.POST_FEWEST_GUESSES_SUCCESS:
-      var newScore = Object.assign({}, state, {
-        currentUserScore: action.currentUserScore
-      });
-      return newScore;
+      return fetchBestScoreSuccess;
     break;
   }
   return state;

@@ -5,19 +5,19 @@ var actions = require('../actions');
 var Guess = React.createClass({
   componentDidMount: function() {
     this.props.dispatch(
-      actions.fetchGuesses(this.props.fewestGuesses)
-    );
+      actions.fetchBestScore());
   },
   render: function (props) {
     var guesses = [];
-    var guessLists = this.props.guessLists.map(function(guessList) {
-      return <li key={guessList}>{guessList}</li>
+    var listOfUserGuesses = this.props.listOfUserGuesses.map(function(listOfUserGuesses) {
+      return <li key={listOfUserGuesses}>{listOfUserGuesses}</li>
     });
     return (
       <div>
-        <p>Best Score:<span ref="fewestGuesses">{this.props.fewestGuesses}</span></p>
-        <p>Guess #<span ref="guessCounter" id="count">{this.props.counter}</span>!</p>
-  			<ul id="guessList" className="guessBox clearfix">{guessLists}</ul>
+        <p>Best Score:
+          <span ref="bestScore">{this.props.bestScore}</span></p>
+        <p>Guess #<span ref="userAttempts" id="count">{this.props.userAttempts}</span>!</p>
+  			<ul id="guessList" className="guessBox clearfix">{listOfUserGuesses}</ul>
       </div>
     );
   }
@@ -25,9 +25,9 @@ var Guess = React.createClass({
 
 var mapStateToProps = function(state, props) {
   return {
-    fewestGuesses: state.fewestGuesses,
-    counter: state.counter,
-    guessLists: state.guesses
+    bestScore: state.bestScore,
+    userAttempts: state.userAttempts,
+    listOfUserGuesses: state.guesses
   };
 };
 

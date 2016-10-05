@@ -23094,11 +23094,10 @@
 	var initialGameState = {
 	  generateRandomNumber: Math.floor(Math.random() * 100) + 1,
 	  guesses: [],
-	  counter: 0,
+	  userAttempts: 0,
 	  feedback: "Make your Guess!",
 	  userGuess: '',
-	  fewestGuesses: 0,
-	  currentUserScore: 0
+	  bestScore: 0
 	};
 	
 	console.log(initialGameState);
@@ -23111,9 +23110,9 @@
 	    case actions.ON_SUBMIT:
 	      var correctGuess = false;
 	      var feedback;
-	      var counter = state.counter + 1;
-	      var guessLists = state.guesses.concat(action.guess);
-	      console.log('what is guessLists', guessLists);
+	      var bestScore = state.bestScore;
+	      var userAttempts = state.userAttempts + 1;
+	      var listOfUserGuesses = state.guesses.concat(action.guess);
 	      action.guess = parseInt(action.guess);
 	      if (action.guess === state.generateRandomNumber) {
 	        correctGuess = true;
@@ -23131,22 +23130,11 @@
 	        feedback = 'Very Cold!';
 	      }
 	
-	      if (isNaN(action.guess)) {
-	        feedback = 'Please enter a number!';
-	        counter = state.counter - 1;
-	        guessList = state.guesses.pop();
-	      } else if (!parseInt(action.guess)) {
-	        feedback = 'Please enter a whole number!';
-	        counter = state.counter - 1;
-	        guessList.pop();
-	      } else {
-	        guessLists;
-	        counter;
-	      }
 	      return Object.assign({}, state, {
-	        guesses: guessLists,
-	        counter: counter,
-	        feedback: feedback
+	        guesses: listOfUserGuesses,
+	        userAttempts: userAttempts,
+	        feedback: feedback,
+	        bestScore: bestScore
 	      });
 	      break;
 	
@@ -23154,23 +23142,17 @@
 	      var newGame = Object.assign({}, state, {
 	        generateRandomNumber: Math.floor(Math.random() * 100) + 1,
 	        guesses: [],
-	        counter: 0,
+	        userAttempts: 0,
 	        feedback: "New Game! Make your Guess!"
 	      });
 	      return newGame;
 	      break;
 	
-	    case actions.FETCH_FEWEST_GUESSES_SUCCESS:
-	      return Object.assign({}, state, {
-	        fewestGuesses: action.fewestGuesses
+	    case actions.FETCH_BEST_SCORE_SUCCESS:
+	      var fetchBestScoreSuccess = Object.assign({}, state, {
+	        bestScore: action.bestScore
 	      });
-	      break;
-	
-	    case actions.POST_FEWEST_GUESSES_SUCCESS:
-	      var newScore = Object.assign({}, state, {
-	        currentUserScore: action.currentUserScore
-	      });
-	      return newScore;
+	      return fetchBestScoreSuccess;
 	      break;
 	  }
 	  return state;
@@ -23192,11 +23174,10 @@
 	
 	var ON_SUBMIT = 'ON_SUBMIT'; //Actions.js is what I want to happen when a user clicks the components on the page. This doesn't have any logic in it so it won't be able to do anything. It will send that it's been fired up to the reducers and the reducers will handle the logic (what to do) from there.
 	
-	var onSubmit = function onSubmit(guess, counter) {
+	var onSubmit = function onSubmit(guess) {
 	  return {
 	    type: ON_SUBMIT,
-	    guess: guess,
-	    counter: counter
+	    guess: guess
 	  };
 	};
 	
@@ -23208,26 +23189,26 @@
 	  };
 	};
 	
-	var FETCH_FEWEST_GUESSES_SUCCESS = 'FETCH_FEWEST_GUESSES_SUCCESS';
-	var fetchFewestGuessesSuccess = function fetchFewestGuessesSuccess(fewestGuesses) {
+	var FETCH_BEST_SCORE_SUCCESS = 'FETCH_BEST_SCORE_SUCCESS';
+	var fetchBestScoreSuccess = function fetchBestScoreSuccess(bestScore) {
 	  return {
-	    type: FETCH_FEWEST_GUESSES_SUCCESS,
-	    fewestGuesses: fewestGuesses
+	    type: FETCH_BEST_SCORE_SUCCESS,
+	    bestScore: bestScore
 	  };
 	};
 	
-	var FETCH_FEWEST_GUESSES_ERROR = 'FETCH_FEWEST_GUESSES_ERROR';
-	var fetchFewestGuessesError = function fetchFewestGuessesError(fewestGuesses, error) {
+	var FETCH_BEST_SCORE_ERROR = 'FETCH_BEST_SCORE_ERROR';
+	var fetchBestScoreError = function fetchBestScoreError(bestScore, error) {
 	  return {
-	    type: FETCH_FEWEST_GUESSES_ERROR,
-	    fewestGuesses: fewestGuesses,
+	    type: FETCH_BEST_SCORE_ERROR,
+	    bestScore: bestScore,
 	    error: error
 	  };
 	};
 	
-	var fetchGuesses = function fetchGuesses() {
+	var fetchBestScore = function fetchBestScore() {
 	  return function (dispatch) {
-	    var url = 'http://localhost:8080/fewest-guesses';
+	    var url = '/fewest-guesses';
 	    return (0, _isomorphicFetch2.default)(url, {
 	      method: 'get',
 	      headers: {
@@ -23241,38 +23222,22 @@
 	      }
 	      return res.json({});
 	    }).then(function (data) {
-	      return dispatch(fetchFewestGuessesSuccess(data));
+	      return dispatch(fetchBestScoreSuccess(data[0].bestScore));
 	    }).catch(function (error) {
-	      return dispatch(fetchFewestGuessesError(error));
+	      return dispatch(fetchBestScoreError(error));
 	    });
 	  };
 	};
 	
-	var POST_FEWEST_GUESSES_SUCCESS = 'POST_FEWEST_GUESSES_SUCCESS';
-	var postFewestGuessesSuccess = function postFewestGuessesSuccess(fewestGuesses) {
-	  return {
-	    type: POST_FEWEST_GUESSES_SUCCESS,
-	    fewestGuesses: fewestGuesses
-	  };
-	};
-	
-	var POST_FEWEST_GUESSES_ERROR = 'POST_FEWEST_GUESSES_ERROR';
-	var postFewestGuessesError = function postFewestGuessesError(fewestGuesses, error) {
-	  return {
-	    type: POST_FEWEST_GUESSES_ERROR,
-	    fewestGuesses: fewestGuesses,
-	    error: error
-	  };
-	};
-	
-	var postGuesses = function postGuesses() {
+	var updateBestScore = function updateBestScore(newBestScore) {
 	  return function (dispatch) {
 	    var url = '/update-best-score';
 	    return (0, _isomorphicFetch2.default)(url, {
 	      method: 'post',
 	      headers: {
 	        'Content-Type': 'application/json'
-	      }
+	      },
+	      body: JSON.stringify({ newBestScore: newBestScore })
 	    }).then(function (res) {
 	      if (res.status < 200 || res.status >= 300) {
 	        var error = new Error(res.statusText);
@@ -23281,9 +23246,9 @@
 	      }
 	      return res.json({});
 	    }).then(function (data) {
-	      return dispatch(postFewestGuessesSuccess(data));
+	      return dispatch(fetchBestScoreSuccess(data[0].bestScore));
 	    }).catch(function (error) {
-	      return dispatch(postFewestGuessesError(error));
+	      return dispatch(fetchBestScoreError(error));
 	    });
 	  };
 	};
@@ -23292,16 +23257,12 @@
 	exports.onSubmit = onSubmit;
 	exports.NEW_GAME = NEW_GAME;
 	exports.newGame = newGame;
-	exports.FETCH_FEWEST_GUESSES_SUCCESS = FETCH_FEWEST_GUESSES_SUCCESS;
-	exports.fetchFewestGuessesSuccess = fetchFewestGuessesSuccess;
-	exports.FETCH_FEWEST_GUESSES_ERROR = FETCH_FEWEST_GUESSES_ERROR;
-	exports.fetchFewestGuessesError = fetchFewestGuessesError;
-	exports.fetchGuesses = fetchGuesses;
-	exports.POST_FEWEST_GUESSES_SUCCESS = POST_FEWEST_GUESSES_SUCCESS;
-	exports.postFewestGuessesSuccess;
-	exports.POST_FEWEST_GUESSES_ERROR = POST_FEWEST_GUESSES_ERROR;
-	exports.postFewestGuessesError = postFewestGuessesError;
-	exports.postGuesses = postGuesses;
+	exports.FETCH_BEST_SCORE_SUCCESS = FETCH_BEST_SCORE_SUCCESS;
+	exports.fetchBestScoreSuccess = fetchBestScoreSuccess;
+	exports.FETCH_BEST_SCORE_ERROR = FETCH_BEST_SCORE_ERROR;
+	exports.fetchBestScoreError = fetchBestScoreError;
+	exports.fetchBestScore = fetchBestScore;
+	exports.updateBestScore = updateBestScore;
 
 /***/ },
 /* 200 */
@@ -23802,15 +23763,7 @@
 	
 	  onClick: function onClick(event) {
 	    event.preventDefault();
-	    this.props.dispatch(actions.onSubmit(this.refs.userGuess.value, this.props.counter));
-	
-	    console.log('store.getState()', store.getState());
-	
-	    if (store.getState().rightGuess === true) {
-	      if (parseInt(store.getState().fewestGuesses) < parseInt(store.getState().currentUserScore)) {
-	        store.dispatch(actions.postGuesses(store.getState().fewestGuesses, store.getState().currentUserScore));
-	      }
-	    }
+	    this.props.dispatch(actions.onSubmit(this.refs.userGuess.value, this.props.userAttempts));
 	    this.refs.userGuess.value = '';
 	  },
 	  render: function render() {
@@ -23829,10 +23782,8 @@
 	
 	var mapStateToProps = function mapStateToProps(state, props) {
 	  return {
-	    counter: state.counter,
-	    rightGuess: state.rightGuess,
-	    currentUserScore: state.currentUserScore,
-	    fewestGuesses: state.fewestGuesses
+	    userAttempts: state.userAttempts,
+	    bestScore: state.bestScore
 	  };
 	};
 	
@@ -23853,15 +23804,15 @@
 	  displayName: 'Guess',
 	
 	  componentDidMount: function componentDidMount() {
-	    this.props.dispatch(actions.fetchGuesses(this.props.fewestGuesses));
+	    this.props.dispatch(actions.fetchBestScore());
 	  },
 	  render: function render(props) {
 	    var guesses = [];
-	    var guessLists = this.props.guessLists.map(function (guessList) {
+	    var listOfUserGuesses = this.props.listOfUserGuesses.map(function (listOfUserGuesses) {
 	      return React.createElement(
 	        'li',
-	        { key: guessList },
-	        guessList
+	        { key: listOfUserGuesses },
+	        listOfUserGuesses
 	      );
 	    });
 	    return React.createElement(
@@ -23873,8 +23824,8 @@
 	        'Best Score:',
 	        React.createElement(
 	          'span',
-	          { ref: 'fewestGuesses' },
-	          this.props.fewestGuesses
+	          { ref: 'bestScore' },
+	          this.props.bestScore
 	        )
 	      ),
 	      React.createElement(
@@ -23883,15 +23834,15 @@
 	        'Guess #',
 	        React.createElement(
 	          'span',
-	          { ref: 'guessCounter', id: 'count' },
-	          this.props.counter
+	          { ref: 'userAttempts', id: 'count' },
+	          this.props.userAttempts
 	        ),
 	        '!'
 	      ),
 	      React.createElement(
 	        'ul',
 	        { id: 'guessList', className: 'guessBox clearfix' },
-	        guessLists
+	        listOfUserGuesses
 	      )
 	    );
 	  }
@@ -23899,9 +23850,9 @@
 	
 	var mapStateToProps = function mapStateToProps(state, props) {
 	  return {
-	    fewestGuesses: state.fewestGuesses,
-	    counter: state.counter,
-	    guessLists: state.guesses
+	    bestScore: state.bestScore,
+	    userAttempts: state.userAttempts,
+	    listOfUserGuesses: state.guesses
 	  };
 	};
 	
@@ -23947,27 +23898,39 @@
 	var React = __webpack_require__(1);
 	var actions = __webpack_require__(199);
 	var connect = __webpack_require__(172).connect;
+	var store = __webpack_require__(196);
 	
 	var NewGame = React.createClass({
-	    displayName: 'NewGame',
+	  displayName: 'NewGame',
 	
-	    onClick: function onClick() {
-	        this.props.dispatch(actions.newGame());
-	    },
-	    render: function render() {
-	        return React.createElement(
-	            'div',
-	            null,
-	            React.createElement(
-	                'button',
-	                { type: 'button', onClick: this.onClick },
-	                'New Game'
-	            )
-	        );
+	  onClick: function onClick() {
+	    this.props.dispatch(actions.newGame());
+	
+	    if (this.props.userAttempts < this.props.bestScore) {
+	      store.dispatch(actions.updateBestScore(this.props.userAttempts));
 	    }
+	  },
+	  render: function render() {
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'button',
+	        { type: 'button', onClick: this.onClick },
+	        'New Game'
+	      )
+	    );
+	  }
 	});
 	
-	var Container = connect()(NewGame);
+	var mapStateToProps = function mapStateToProps(state, props) {
+	  return {
+	    userAttempts: state.userAttempts,
+	    bestScore: state.bestScore
+	  };
+	};
+	
+	var Container = connect(mapStateToProps)(NewGame);
 	module.exports = Container;
 
 /***/ }

@@ -6,15 +6,7 @@ var actions = require('../actions');
 var UserInput = React.createClass({
   onClick: function (event) {
     event.preventDefault();
-    this.props.dispatch(actions.onSubmit(this.refs.userGuess.value, this.props.counter));
-
-    console.log('store.getState()', store.getState());
-
-    if (store.getState().rightGuess === true) {
-      if (parseInt(store.getState().fewestGuesses) < parseInt(store.getState().currentUserScore)) {
-        store.dispatch(actions.postGuesses(store.getState().fewestGuesses, store.getState().currentUserScore))
-      }
-    }
+    this.props.dispatch(actions.onSubmit(this.refs.userGuess.value, this.props.userAttempts));
     this.refs.userGuess.value = '';
   },
   render: function() {
@@ -31,10 +23,8 @@ var UserInput = React.createClass({
 
 var mapStateToProps = function(state, props) {
   return {
-    counter: state.counter,
-    rightGuess: state.rightGuess,
-    currentUserScore: state.currentUserScore,
-    fewestGuesses: state.fewestGuesses
+    userAttempts: state.userAttempts,
+    bestScore: state.bestScore,
   }
 };
 
