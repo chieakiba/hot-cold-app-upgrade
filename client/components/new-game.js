@@ -6,14 +6,14 @@ var store = require('../store');
 var NewGame = React.createClass({
   onClick: function() {
         this.props.dispatch(actions.newGame());
-    },
-    render: function() {
-        return(
-            <div>
-                <button type='button' onClick={this.onClick}>New Game</button>
-            </div>
-        );
-    }
+  },
+  render: function() {
+      return(
+          <div>
+              <button type='button' onClick={this.onClick}>New Game</button>
+          </div>
+      );
+  }
 });
 
 var Container = connect()(NewGame);

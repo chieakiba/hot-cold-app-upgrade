@@ -7,12 +7,12 @@ var UserInput = React.createClass({
   onClick: function (event) {
     event.preventDefault();
     this.props.dispatch(actions.onSubmit(this.refs.userGuess.value, this.props.userAttempts));
-
+    this.refs.userGuess.value = '';
+  },
+  componentDidMount: function () {
     if (this.props.userAttempts < this.props.bestScore) {
       store.dispatch(actions.updateBestScore(this.props.userAttempts))
     }
-
-    this.refs.userGuess.value = '';
   },
   render: function() {
     return (
