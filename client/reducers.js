@@ -16,27 +16,11 @@ console.log(initialGameState);
 var gameReducer = function(state = initialGameState, action) {
   switch(action.type) {
     case actions.ON_SUBMIT:
-      var correctGuess = false;
       var feedback;
       var bestScore = state.bestScore;
       var userAttempts = state.userAttempts + 1;
       var listOfUserGuesses = state.guesses.concat(action.guess);
       action.guess = parseInt(action.guess);
-      if(action.guess === state.generateRandomNumber) {
-        correctGuess = true;
-        feedback = 'Correct! Click "New Game" to play again.';
-      } else if (state.generateRandomNumber - 1 <= action.guess && state.generateRandomNumber + 10 >= action.guess) {
-        correctGuess = false;
-        feedback = 'Hot!';
-      } else if (state.generateRandomNumber - 11 <= action.guess && state.generateRandomNumber + 20 >= action.guess) {
-        correctGuess = false;
-        feedback = 'Warmer';
-      } else if (state.generateRandomNumber - 21 <= action.guess && state.generateRandomNumber + 30 >= action.guess) {
-        correctGuess = false;
-        feedback = 'Cold!';
-      } else {
-        feedback = 'Very Cold!';
-      }
 
       return Object.assign({}, state, {
         guesses: listOfUserGuesses,
