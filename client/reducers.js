@@ -45,6 +45,12 @@ var gameReducer = function(state = initialGameState, action) {
       });
       return fetchBestScoreSuccess;
     break;
+
+    case actions.GATHER_FEEDBACK:
+      return Object.assign({}, state, {
+        feedback: action.feedback
+      });
+    break;
   }
   return state;
 };

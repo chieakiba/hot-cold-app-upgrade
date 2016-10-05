@@ -60,6 +60,21 @@ var fetchBestScore = function () {
   }
 };
 
+var gatherFeedback = function (usersGuess, correctAnswer) {
+  if(usersGuess === correctAnswer) {
+    return {
+      type: GATHER_FEEDBACK,
+      feedback: "Correct answer ...."
+    }
+  }
+  else if (...) {
+    return {
+      type: GATHER_FEEDBACK,
+      feedback: "A your close ...."
+    }
+  }
+};
+
 var updateBestScore = function (newBestScore) {
   return function (dispatch) {
     var url = '/update-best-score';
