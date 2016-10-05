@@ -41,8 +41,7 @@ var gameReducer = function(state = initialGameState, action) {
       return Object.assign({}, state, {
         guesses: listOfUserGuesses,
         userAttempts: userAttempts,
-        feedback: feedback,
-        bestScore: bestScore
+        feedback: feedback
       });
     break;
 

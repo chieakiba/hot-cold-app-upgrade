@@ -68,7 +68,7 @@ var updateBestScore = function (newBestScore) {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({newBestScore: newBestScore})
+      body: JSON.stringify({"newBestScore": newBestScore})
     })
     .then(function(res) {
       if (res.status < 200 || res.status >= 300) {

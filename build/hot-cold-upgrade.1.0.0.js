@@ -23133,8 +23133,7 @@
 	      return Object.assign({}, state, {
 	        guesses: listOfUserGuesses,
 	        userAttempts: userAttempts,
-	        feedback: feedback,
-	        bestScore: bestScore
+	        feedback: feedback
 	      });
 	      break;
 	
@@ -23237,7 +23236,7 @@
 	      headers: {
 	        'Content-Type': 'application/json'
 	      },
-	      body: JSON.stringify({ newBestScore: newBestScore })
+	      body: JSON.stringify({ "newBestScore": newBestScore })
 	    }).then(function (res) {
 	      if (res.status < 200 || res.status >= 300) {
 	        var error = new Error(res.statusText);
@@ -23764,6 +23763,11 @@
 	  onClick: function onClick(event) {
 	    event.preventDefault();
 	    this.props.dispatch(actions.onSubmit(this.refs.userGuess.value, this.props.userAttempts));
+	
+	    if (this.props.userAttempts < this.props.bestScore) {
+	      store.dispatch(actions.updateBestScore(this.props.userAttempts));
+	    }
+	
 	    this.refs.userGuess.value = '';
 	  },
 	  render: function render() {
@@ -23901,36 +23905,25 @@
 	var store = __webpack_require__(196);
 	
 	var NewGame = React.createClass({
-	  displayName: 'NewGame',
+	    displayName: 'NewGame',
 	
-	  onClick: function onClick() {
-	    this.props.dispatch(actions.newGame());
-	
-	    if (this.props.userAttempts < this.props.bestScore) {
-	      store.dispatch(actions.updateBestScore(this.props.userAttempts));
+	    onClick: function onClick() {
+	        this.props.dispatch(actions.newGame());
+	    },
+	    render: function render() {
+	        return React.createElement(
+	            'div',
+	            null,
+	            React.createElement(
+	                'button',
+	                { type: 'button', onClick: this.onClick },
+	                'New Game'
+	            )
+	        );
 	    }
-	  },
-	  render: function render() {
-	    return React.createElement(
-	      'div',
-	      null,
-	      React.createElement(
-	        'button',
-	        { type: 'button', onClick: this.onClick },
-	        'New Game'
-	      )
-	    );
-	  }
 	});
 	
-	var mapStateToProps = function mapStateToProps(state, props) {
-	  return {
-	    userAttempts: state.userAttempts,
-	    bestScore: state.bestScore
-	  };
-	};
-	
-	var Container = connect(mapStateToProps)(NewGame);
+	var Container = connect()(NewGame);
 	module.exports = Container;
 
 /***/ }
