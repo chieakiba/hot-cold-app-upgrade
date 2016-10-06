@@ -23107,16 +23107,16 @@
 	
 	  switch (action.type) {
 	    case actions.ON_SUBMIT:
-	      var feedback = state.feedback;
+	      var userGuess = '';
+	      // var feedback = state.feedback;
 	      var bestScore = state.bestScore;
 	      var userAttempts = state.userAttempts + 1;
-	      var listOfUserGuesses = state.guesses.concat(action.guess);
-	      action.guess = parseInt(action.guess);
+	      var listOfUserGuesses = state.guesses.concat(action.userGuess);
+	      action.userGuess = parseInt(action.userGuess);
 	
 	      return Object.assign({}, state, {
-	        guesses: listOfUserGuesses,
-	        userAttempts: userAttempts,
-	        feedback: feedback
+	        userGuess: listOfUserGuesses,
+	        userAttempts: userAttempts
 	      });
 	      break;
 	
@@ -23164,10 +23164,11 @@
 	var ON_SUBMIT = 'ON_SUBMIT'; //Actions.js is what I want to happen when a user clicks the components on the page. This doesn't have any logic in it so it won't be able to do anything. It will send that it's been fired up to the reducers and the reducers will change the state.
 	//Action applies the logic
 	
-	var onSubmit = function onSubmit(guess) {
+	var onSubmit = function onSubmit(userGuess, userAttempts) {
 	  return {
 	    type: ON_SUBMIT,
-	    guess: guess
+	    userGuess: userGuess,
+	    userAttempts: userAttempts
 	  };
 	};
 	
@@ -23187,80 +23188,33 @@
 	  };
 	};
 	
-	// var SEND_FEEDBACK_CORRECT = 'SEND_FEEDBACK_CORRECT';
-	// var sendFeedbackCorrect = function (feedback) {
-	//   return {
-	//     type: SEND_FEEDBACK_CORRECT,
-	//     feedback: "You got it right! Play again?",
-	//   }
-	// };
-	//
-	// var SEND_FEEDBACK_HOT = 'SEND_FEEDBACK_HOT';
-	// var sendFeedbackHot = function (feedback) {
-	//   return {
-	//     type: SEND_FEEDBACK_HOT,
-	//     feedback: "HOT!",
-	//   }
-	// };
-	//
-	// var SEND_FEEDBACK_WARM = 'SEND_FEEDBACK_WARM';
-	// var sendFeedbackWarm = function (feedback) {
-	//   return {
-	//     type: SEND_FEEDBACK_WARM,
-	//     feedback: "Getting warmer...",
-	//   }
-	// };
-	//
-	// var SEND_FEEDBACK_COLD = 'SEND_FEEDBACK_COLD';
-	// var sendFeedbackCold = function (feedback) {
-	//   return {
-	//     type: SEND_FEEDBACK_COLD,
-	//     feedback: "Cold",
-	//   }
-	// };
-	//
-	// var SEND_FEEDBACK_VERY_COLD = 'SEND_FEEDBACK_VERY_COLD';
-	// var sendFeedbackVeryCold = function (feedback) {
-	//   return {
-	//     type: SEND_FEEDBACK_VERY_COLD,
-	//     feedback: "Very Cold!!",
-	//   }
-	// };
-	
 	var gatherFeedback = function gatherFeedback(userGuess, correctAnswer) {
-	  // return function(dispatch) {
 	  if (userGuess === correctAnswer) {
-	    // return dispatch(sendFeedback("You got it right! Play again?"));
 	    return {
 	      type: SEND_FEEDBACK,
-	      feedback: "You got it right"
+	      feedback: "You got it right! Play Again?"
 	    };
-	  } else if (correctAnswer - 1 <= userGuess && userGuess + 10 >= correctAnswer) {
-	    // return dispatch(sendFeedback("Getting hotter!"));
+	  } else if (userGuess >= correctAnswer - 5 && userGuess + 5 >= correctAnswer) {
 	    return {
 	      type: SEND_FEEDBACK,
 	      feedback: "Hot!"
 	    };
-	  } else if (correctAnswer - 11 <= userGuess && userGuess + 20 >= correctAnswer) {
-	    // return dispatch(sendFeedback("Warmer..."));
+	  } else if (userGuess >= correctAnswer - 10 && userGuess + 10 >= correctAnswer) {
 	    return {
 	      type: SEND_FEEDBACK,
 	      feedback: "Warmer"
 	    };
-	  } else if (correctAnswer - 21 <= userGuess && userGuess + 30 >= correctAnswer) {
-	    // return dispatch(sendFeedback("Colder..."));
+	  } else if (userGuess >= correctAnswer - 15 && userGuess + 15 >= correctAnswer) {
 	    return {
 	      type: SEND_FEEDBACK,
 	      feedback: "Cold"
 	    };
 	  } else {
-	    // return dispatch(sendFeedback("Very Cold!"));
 	    return {
 	      type: SEND_FEEDBACK,
 	      feedback: "Very Cold!"
 	    };
 	  }
-	  // }
 	};
 	
 	var FETCH_BEST_SCORE_SUCCESS = 'FETCH_BEST_SCORE_SUCCESS';
@@ -23840,8 +23794,9 @@
 	
 	  onClick: function onClick(event) {
 	    event.preventDefault();
-	    this.props.dispatch(actions.onSubmit(this.refs.userGuess.value, this.props.userAttempts));
-	    this.refs.userGuess.value = '';
+	    this.props.gatherFeedback(this.refs.userGuess.value, this.props.correctAnswer);
+	    this.props.onSubmit(this.refs.userGuess.value, this.props.userAttempts);
+	    // this.refs.userGuess.value = '';
 	  },
 	  render: function render() {
 	    return React.createElement(
@@ -23859,12 +23814,25 @@
 	
 	var mapStateToProps = function mapStateToProps(state, props) {
 	  return {
+	    userGuess: state.userGuess,
 	    userAttempts: state.userAttempts,
-	    bestScore: state.bestScore
+	    bestScore: state.bestScore,
+	    correctAnswer: state.correctAnswer
 	  };
 	};
 	
-	var Container = connect(mapStateToProps)(UserInput);
+	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+	  return {
+	    gatherFeedback: function gatherFeedback(userGuess, correctAnswer) {
+	      dispatch(actions.gatherFeedback(userGuess, correctAnswer));
+	    },
+	    onSubmit: function onSubmit(userGuess, userAttempts) {
+	      dispatch(actions.onSubmit(userGuess, userAttempts));
+	    }
+	  };
+	};
+	
+	var Container = connect(mapStateToProps, mapDispatchToProps)(UserInput);
 	module.exports = Container;
 
 /***/ },
@@ -23881,10 +23849,9 @@
 	  displayName: 'Guess',
 	
 	  componentDidMount: function componentDidMount() {
-	    this.props.dispatch(actions.fetchBestScore());
+	    this.props.dispatch(actions.fetchBestScore(this.props.bestScore));
 	  },
 	  render: function render(props) {
-	    var guesses = [];
 	    var listOfUserGuesses = this.props.listOfUserGuesses.map(function (listOfUserGuesses) {
 	      return React.createElement(
 	        'li',
@@ -23959,21 +23926,12 @@
 	});
 	
 	var mapStateToProps = function mapStateToProps(state, props) {
-	  console.log(state.feedback);
 	  return {
 	    feedback: state.feedback
 	  };
 	};
 	
-	var mapDispatchToProps = function mapDispatchToProps(state, props) {
-	  return {
-	    feedback: function feedback(userGuess, correctAnswer) {
-	      this.props.dispatch(actions.gatherFeedback(userGuess, correctAnswer));
-	    }
-	  };
-	};
-	
-	var Container = connect(mapStateToProps, mapDispatchToProps)(Feedback);
+	var Container = connect(mapStateToProps)(Feedback);
 	module.exports = Container;
 
 /***/ },

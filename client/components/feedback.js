@@ -11,19 +11,10 @@ var Feedback = React.createClass({
 });
 
 var mapStateToProps = function (state, props) {
-  console.log(state.feedback);
   return {
     feedback: state.feedback
   }
 };
 
-var mapDispatchToProps = function(state, props) {
-  return {
-    feedback: function (userGuess, correctAnswer) {
-      this.props.dispatch(actions.gatherFeedback(userGuess, correctAnswer));
-    }
-  };
-};
-
-var Container = connect(mapStateToProps, mapDispatchToProps)(Feedback);
+var Container = connect(mapStateToProps)(Feedback);
 module.exports = Container;

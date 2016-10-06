@@ -6,8 +6,9 @@ var actions = require('../actions');
 var UserInput = React.createClass({
   onClick: function (event) {
     event.preventDefault();
-    this.props.dispatch(actions.onSubmit(this.refs.userGuess.value, this.props.userAttempts));
-    this.refs.userGuess.value = '';
+    this.props.gatherFeedback(this.refs.userGuess.value, this.props.correctAnswer);
+    this.props.onSubmit(this.refs.userGuess.value, this.props.userAttempts);
+    // this.refs.userGuess.value = '';
   },
   render: function() {
     return (
@@ -23,10 +24,23 @@ var UserInput = React.createClass({
 
 var mapStateToProps = function(state, props) {
   return {
+    userGuess: state.userGuess,
     userAttempts: state.userAttempts,
-    bestScore: state.bestScore
+    bestScore: state.bestScore,
+    correctAnswer: state.correctAnswer
   }
 };
 
-var Container = connect(mapStateToProps)(UserInput);
+var mapDispatchToProps = function(dispatch) {
+  return {
+    gatherFeedback: function(userGuess, correctAnswer) {
+      dispatch(actions.gatherFeedback(userGuess, correctAnswer));
+    },
+    onSubmit: function(userGuess, userAttempts) {
+      dispatch(actions.onSubmit(userGuess, userAttempts));
+    }
+  };
+};
+
+var Container = connect(mapStateToProps, mapDispatchToProps)(UserInput);
 module.exports = Container;
