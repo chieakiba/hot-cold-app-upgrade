@@ -23,7 +23,8 @@ var gameReducer = function(state = initialGameState, action) {
 
       return Object.assign({}, state, {
         guesses: listOfUserGuesses,
-        userAttempts: userAttempts
+        userAttempts: userAttempts,
+        feedback: feedback
       });
     break;
 
@@ -31,8 +32,6 @@ var gameReducer = function(state = initialGameState, action) {
       var sendFeedback = Object.assign({}, state, {
         feedback: action.feedback
       });
-
-      console.log(sendFeedback);
       return sendFeedback;
     break;
 

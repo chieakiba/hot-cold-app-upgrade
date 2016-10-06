@@ -23115,7 +23115,8 @@
 	
 	      return Object.assign({}, state, {
 	        guesses: listOfUserGuesses,
-	        userAttempts: userAttempts
+	        userAttempts: userAttempts,
+	        feedback: feedback
 	      });
 	      break;
 	
@@ -23123,8 +23124,6 @@
 	      var sendFeedback = Object.assign({}, state, {
 	        feedback: action.feedback
 	      });
-	
-	      console.log(sendFeedback);
 	      return sendFeedback;
 	      break;
 	
@@ -23229,39 +23228,39 @@
 	// };
 	
 	var gatherFeedback = function gatherFeedback(userGuess, correctAnswer) {
-	  return function (dispatch) {
-	    if (userGuess === correctAnswer) {
-	      // return dispatch(sendFeedback("You got it right! Play again?"));
-	      return {
-	        type: SEND_FEEDBACK,
-	        feedback: "You got it right"
-	      };
-	    } else if (correctAnswer - 1 <= userGuess && userGuess + 10 >= correctAnswer) {
-	      // return dispatch(sendFeedback("Getting hotter!"));
-	      return {
-	        type: SEND_FEEDBACK,
-	        feedback: "Hot!"
-	      };
-	    } else if (correctAnswer - 11 <= userGuess && userGuess + 20 >= correctAnswer) {
-	      // return dispatch(sendFeedback("Warmer..."));
-	      return {
-	        type: SEND_FEEDBACK,
-	        feedback: "Warmer"
-	      };
-	    } else if (correctAnswer - 21 <= userGuess && userGuess + 30 >= correctAnswer) {
-	      // return dispatch(sendFeedback("Colder..."));
-	      return {
-	        type: SEND_FEEDBACK,
-	        feedback: "Cold"
-	      };
-	    } else {
-	      // return dispatch(sendFeedback("Very Cold!"));
-	      return {
-	        type: SEND_FEEDBACK,
-	        feedback: "Very Cold!"
-	      };
-	    }
-	  };
+	  // return function(dispatch) {
+	  if (userGuess === correctAnswer) {
+	    // return dispatch(sendFeedback("You got it right! Play again?"));
+	    return {
+	      type: SEND_FEEDBACK,
+	      feedback: "You got it right"
+	    };
+	  } else if (correctAnswer - 1 <= userGuess && userGuess + 10 >= correctAnswer) {
+	    // return dispatch(sendFeedback("Getting hotter!"));
+	    return {
+	      type: SEND_FEEDBACK,
+	      feedback: "Hot!"
+	    };
+	  } else if (correctAnswer - 11 <= userGuess && userGuess + 20 >= correctAnswer) {
+	    // return dispatch(sendFeedback("Warmer..."));
+	    return {
+	      type: SEND_FEEDBACK,
+	      feedback: "Warmer"
+	    };
+	  } else if (correctAnswer - 21 <= userGuess && userGuess + 30 >= correctAnswer) {
+	    // return dispatch(sendFeedback("Colder..."));
+	    return {
+	      type: SEND_FEEDBACK,
+	      feedback: "Cold"
+	    };
+	  } else {
+	    // return dispatch(sendFeedback("Very Cold!"));
+	    return {
+	      type: SEND_FEEDBACK,
+	      feedback: "Very Cold!"
+	    };
+	  }
+	  // }
 	};
 	
 	var FETCH_BEST_SCORE_SUCCESS = 'FETCH_BEST_SCORE_SUCCESS';
@@ -23960,15 +23959,16 @@
 	});
 	
 	var mapStateToProps = function mapStateToProps(state, props) {
+	  console.log(state.feedback);
 	  return {
 	    feedback: state.feedback
 	  };
 	};
 	
-	var mapDispatchToProps = function mapDispatchToProps(dispatch, props) {
+	var mapDispatchToProps = function mapDispatchToProps(state, props) {
 	  return {
-	    sendFeedback: function sendFeedback(userGuess, correctAnswer) {
-	      dispatch(actions.gatherFeedback(userGuess, correctAnswer));
+	    feedback: function feedback(userGuess, correctAnswer) {
+	      this.props.dispatch(actions.gatherFeedback(userGuess, correctAnswer));
 	    }
 	  };
 	};

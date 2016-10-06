@@ -67,7 +67,7 @@ var sendFeedback = function (feedback) {
 // };
 
 var gatherFeedback = function (userGuess, correctAnswer) {
-  return function(dispatch) {
+  // return function(dispatch) {
     if (userGuess === correctAnswer) {
       // return dispatch(sendFeedback("You got it right! Play again?"));
       return {
@@ -103,7 +103,7 @@ var gatherFeedback = function (userGuess, correctAnswer) {
         feedback: "Very Cold!"
       }
     }
-  }
+  // }
 };
 
 var FETCH_BEST_SCORE_SUCCESS = 'FETCH_BEST_SCORE_SUCCESS';

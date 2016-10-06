@@ -10,16 +10,17 @@ var Feedback = React.createClass({
   }
 });
 
-var mapStateToProps = function(state, props) {
+var mapStateToProps = function (state, props) {
+  console.log(state.feedback);
   return {
     feedback: state.feedback
-  };
+  }
 };
 
-var mapDispatchToProps = function (dispatch, props) {
+var mapDispatchToProps = function(state, props) {
   return {
-    sendFeedback: function (userGuess, correctAnswer) {
-      dispatch(actions.gatherFeedback(userGuess, correctAnswer));
+    feedback: function (userGuess, correctAnswer) {
+      this.props.dispatch(actions.gatherFeedback(userGuess, correctAnswer));
     }
   };
 };
