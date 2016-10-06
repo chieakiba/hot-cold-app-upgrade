@@ -16,10 +16,10 @@ var mapStateToProps = function(state, props) {
   };
 };
 
-var mapDispatchToProps = function (dispatch) {
+var mapDispatchToProps = function (dispatch, props) {
   return {
     sendFeedback: function (userGuess, correctAnswer) {
-      dispatch(actions.gatherFeedback(feedback));
+      dispatch(actions.gatherFeedback(userGuess, correctAnswer));
     }
   };
 };

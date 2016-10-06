@@ -23107,7 +23107,7 @@
 	
 	  switch (action.type) {
 	    case actions.ON_SUBMIT:
-	      console.log(feedback);
+	      var feedback = state.feedback;
 	      var bestScore = state.bestScore;
 	      var userAttempts = state.userAttempts + 1;
 	      var listOfUserGuesses = state.guesses.concat(action.guess);
@@ -23120,10 +23120,11 @@
 	      break;
 	
 	    case actions.SEND_FEEDBACK:
-	
 	      var sendFeedback = Object.assign({}, state, {
 	        feedback: action.feedback
 	      });
+	
+	      console.log(sendFeedback);
 	      return sendFeedback;
 	      break;
 	
@@ -23187,38 +23188,80 @@
 	  };
 	};
 	
+	// var SEND_FEEDBACK_CORRECT = 'SEND_FEEDBACK_CORRECT';
+	// var sendFeedbackCorrect = function (feedback) {
+	//   return {
+	//     type: SEND_FEEDBACK_CORRECT,
+	//     feedback: "You got it right! Play again?",
+	//   }
+	// };
+	//
+	// var SEND_FEEDBACK_HOT = 'SEND_FEEDBACK_HOT';
+	// var sendFeedbackHot = function (feedback) {
+	//   return {
+	//     type: SEND_FEEDBACK_HOT,
+	//     feedback: "HOT!",
+	//   }
+	// };
+	//
+	// var SEND_FEEDBACK_WARM = 'SEND_FEEDBACK_WARM';
+	// var sendFeedbackWarm = function (feedback) {
+	//   return {
+	//     type: SEND_FEEDBACK_WARM,
+	//     feedback: "Getting warmer...",
+	//   }
+	// };
+	//
+	// var SEND_FEEDBACK_COLD = 'SEND_FEEDBACK_COLD';
+	// var sendFeedbackCold = function (feedback) {
+	//   return {
+	//     type: SEND_FEEDBACK_COLD,
+	//     feedback: "Cold",
+	//   }
+	// };
+	//
+	// var SEND_FEEDBACK_VERY_COLD = 'SEND_FEEDBACK_VERY_COLD';
+	// var sendFeedbackVeryCold = function (feedback) {
+	//   return {
+	//     type: SEND_FEEDBACK_VERY_COLD,
+	//     feedback: "Very Cold!!",
+	//   }
+	// };
+	
 	var gatherFeedback = function gatherFeedback(userGuess, correctAnswer) {
-	  if (userGuess === correctAnswer) {
-	    return dispatch(sendFeedback("You got it right! Play again?"));
-	    // return {
-	    //   type: SEND_FEEDBACK,
-	    //   feedback: "You got it right"
-	    // }
-	  } else if (correctAnswer - 1 <= userGuess && userGuess + 10 >= correctAnswer) {
-	    return dispatch(sendFeedback("Getting hotter!"));
-	    // return {
-	    //   type: SEND_FEEDBACK,
-	    //   feedback: "Hot!"
-	    // }
-	  } else if (correctAnswer - 11 <= userGuess && userGuess + 20 >= correctAnswer) {
-	    return dispatch(sendFeedback("Warmer..."));
-	    // return {
-	    //   type: SEND_FEEDBACK,
-	    //   feedback: "Warmer"
-	    // }
-	  } else if (correctAnswer - 21 <= userGuess && userGuess + 30 >= correctAnswer) {
-	    return dispatch(sendFeedback("Colder..."));
-	    // return {
-	    //   type: SEND_FEEDBACK,
-	    //   feedback: "Cold"
-	    // }
-	  } else {
-	    return dispatch(sendFeedback("Very Cold!"));
-	    // return {
-	    //   type: SEND_FEEDBACK,
-	    //   feedback: "Very Cold!"
-	    // }
-	  }
+	  return function (dispatch) {
+	    if (userGuess === correctAnswer) {
+	      // return dispatch(sendFeedback("You got it right! Play again?"));
+	      return {
+	        type: SEND_FEEDBACK,
+	        feedback: "You got it right"
+	      };
+	    } else if (correctAnswer - 1 <= userGuess && userGuess + 10 >= correctAnswer) {
+	      // return dispatch(sendFeedback("Getting hotter!"));
+	      return {
+	        type: SEND_FEEDBACK,
+	        feedback: "Hot!"
+	      };
+	    } else if (correctAnswer - 11 <= userGuess && userGuess + 20 >= correctAnswer) {
+	      // return dispatch(sendFeedback("Warmer..."));
+	      return {
+	        type: SEND_FEEDBACK,
+	        feedback: "Warmer"
+	      };
+	    } else if (correctAnswer - 21 <= userGuess && userGuess + 30 >= correctAnswer) {
+	      // return dispatch(sendFeedback("Colder..."));
+	      return {
+	        type: SEND_FEEDBACK,
+	        feedback: "Cold"
+	      };
+	    } else {
+	      // return dispatch(sendFeedback("Very Cold!"));
+	      return {
+	        type: SEND_FEEDBACK,
+	        feedback: "Very Cold!"
+	      };
+	    }
+	  };
 	};
 	
 	var FETCH_BEST_SCORE_SUCCESS = 'FETCH_BEST_SCORE_SUCCESS';
@@ -23922,10 +23965,10 @@
 	  };
 	};
 	
-	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+	var mapDispatchToProps = function mapDispatchToProps(dispatch, props) {
 	  return {
 	    sendFeedback: function sendFeedback(userGuess, correctAnswer) {
-	      dispatch(actions.gatherFeedback(feedback));
+	      dispatch(actions.gatherFeedback(userGuess, correctAnswer));
 	    }
 	  };
 	};

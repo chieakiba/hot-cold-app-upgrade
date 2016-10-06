@@ -15,7 +15,7 @@ console.log(initialGameState);
 var gameReducer = function(state = initialGameState, action) {
   switch(action.type) {
     case actions.ON_SUBMIT:
-      console.log(feedback);
+      var feedback = state.feedback;
       var bestScore = state.bestScore;
       var userAttempts = state.userAttempts + 1;
       var listOfUserGuesses = state.guesses.concat(action.guess);
@@ -28,10 +28,11 @@ var gameReducer = function(state = initialGameState, action) {
     break;
 
     case actions.SEND_FEEDBACK:
-
       var sendFeedback = Object.assign({}, state, {
         feedback: action.feedback
       });
+
+      console.log(sendFeedback);
       return sendFeedback;
     break;
 
