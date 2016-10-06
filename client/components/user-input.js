@@ -24,7 +24,7 @@ var UserInput = React.createClass({
 var mapStateToProps = function(state, props) {
   return {
     userAttempts: state.userAttempts,
-    bestScore: state.bestScore,
+    bestScore: state.bestScore
   }
 };
 

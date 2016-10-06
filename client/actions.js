@@ -18,44 +18,49 @@ var newGame = function (game) {
   }
 };
 
-var GATHER_FEEDBACK = 'GATHER_FEEDBACK';
-var gatherFeedback = function (feedback) {
+var SEND_FEEDBACK = 'SEND_FEEDBACK';
+var sendFeedback = function (feedback) {
   return {
-    type: GATHER_FEEDBACK,
-    feedback: feedback
+    type: SEND_FEEDBACK,
+    feedback: feedback,
   }
 };
 
 var gatherFeedback = function (userGuess, correctAnswer) {
   if (userGuess === correctAnswer) {
-    return {
-      type: GATHER_FEEDBACK,
-      feedback: "You got it right! Play Again?"
-    }
+    return dispatch(sendFeedback("You got it right! Play again?"));
+    // return {
+    //   type: SEND_FEEDBACK,
+    //   feedback: "You got it right"
+    // }
   }
   else if (correctAnswer - 1 <= userGuess && userGuess + 10 >= correctAnswer) {
-    return {
-      type: GATHER_FEEDBACK,
-      feedback: "Getting hotter!"
-    }
+    return dispatch(sendFeedback("Getting hotter!"));
+    // return {
+    //   type: SEND_FEEDBACK,
+    //   feedback: "Hot!"
+    // }
   }
   else if (correctAnswer - 11 <= userGuess && userGuess + 20 >= correctAnswer) {
-    return {
-      type: GATHER_FEEDBACK,
-      feedback: "Warmer..."
-    }
+    return dispatch(sendFeedback("Warmer..."));
+    // return {
+    //   type: SEND_FEEDBACK,
+    //   feedback: "Warmer"
+    // }
   }
   else if (correctAnswer - 21 <= userGuess && userGuess + 30 >= correctAnswer) {
-    return {
-      type: GATHER_FEEDBACK,
-      feedback: "Cold!"
-    }
+    return dispatch(sendFeedback("Colder..."));
+    // return {
+    //   type: SEND_FEEDBACK,
+    //   feedback: "Cold"
+    // }
   }
   else {
-    return {
-      type: GATHER_FEEDBACK,
-      feedback: "Very Cold!"
-    }
+    return dispatch(sendFeedback("Very Cold!"));
+    // return {
+    //   type: SEND_FEEDBACK,
+    //   feedback: "Very Cold!"
+    // }
   }
 };
 
@@ -139,3 +144,6 @@ exports.FETCH_BEST_SCORE_ERROR = FETCH_BEST_SCORE_ERROR;
 exports.fetchBestScoreError = fetchBestScoreError;
 exports.fetchBestScore = fetchBestScore;
 exports.updateBestScore = updateBestScore;
+exports.SEND_FEEDBACK = SEND_FEEDBACK;
+exports.sendFeedback = sendFeedback;
+exports.gatherFeedback = gatherFeedback;

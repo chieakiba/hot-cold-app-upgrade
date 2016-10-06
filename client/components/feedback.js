@@ -16,9 +16,9 @@ var mapStateToProps = function(state, props) {
   };
 };
 
-var mapDispatchToProps = function () {
+var mapDispatchToProps = function (dispatch) {
   return {
-    gatherFeedback: function (userGuess, correctAnswer) {
+    sendFeedback: function (userGuess, correctAnswer) {
       dispatch(actions.gatherFeedback(feedback));
     }
   };
