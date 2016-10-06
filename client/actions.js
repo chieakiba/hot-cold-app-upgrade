@@ -28,25 +28,26 @@ var sendFeedback = function (feedback) {
 };
 
 var gatherFeedback = function (userGuess, correctAnswer) {
-    if (userGuess === correctAnswer) {
+    var distanceFromCorrectAnswer = Math.abs(correctAnswer - userGuess);
+    if (userGuess == correctAnswer) {
       return {
         type: SEND_FEEDBACK,
         feedback: "You got it right! Play Again?"
       }
     }
-    else if (userGuess >= correctAnswer - 5 && userGuess + 5 >= correctAnswer) {
+    else if (distancefromCorrectAnswer <= 10 && distancefromCorrectAnswer >= 1) {
       return {
         type: SEND_FEEDBACK,
         feedback: "Hot!"
       }
     }
-    else if (userGuess >= correctAnswer - 10 && userGuess + 10 >= correctAnswer) {
+    else if (distancefromCorrectAnswer <= 20 && distancefromCorrectAnswer >= 11) {
       return {
         type: SEND_FEEDBACK,
         feedback: "Warmer"
       }
     }
-    else if (userGuess >= correctAnswer - 15 && userGuess + 15 >= correctAnswer) {
+    else if (distancefromCorrectAnswer <= 30 && distancefromCorrectAnswer >= 21) {
       return {
         type: SEND_FEEDBACK,
         feedback: "Cold"
