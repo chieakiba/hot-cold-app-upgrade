@@ -6,8 +6,7 @@ var initialGameState = {
   guesses: [],
   userAttempts: 0,
   feedback: "Make your Guess!",
-  userGuess: '',
-  bestScore: 0,
+  userGuess: ''
 };
 
 console.log(initialGameState);
@@ -38,7 +37,7 @@ var gameReducer = function(state = initialGameState, action) {
         correctAnswer: Math.floor(Math.random() * 100) + 1,
         guesses: [],
         userAttempts: 0,
-        feedback: "New Game! Make your Guess!",
+        feedback: "New Game! Make your Guess!"
       });
       return newGame;
     break;

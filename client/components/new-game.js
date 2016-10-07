@@ -5,9 +5,11 @@ var store = require('../store');
 
 var NewGame = React.createClass({
   onClick: function() {
-    this.props.newGame(this.props.bestScore, this.props.userAttempts, this.props.correctAnswer);
+    this.props.newGame(this.props.userAttempts, this.props.correctAnswer);
+
     if (this.props.userAttempts < this.props.bestScore) {
       this.props.updateBestScore(this.props.userAttempts);
+      this.props.fetchBestScore(this.props.bestScore);
     }
   },
   render: function() {
@@ -29,14 +31,18 @@ var mapStateToProps = function(state, props) {
 
 var mapDispatchToProps = function (dispatch) {
   return {
-    newGame: function(bestScore, userAttempts, correctAnswer) {
-      dispatch(actions.newGame(bestScore, userAttempts, correctAnswer));
+    newGame: function(userAttempts, correctAnswer) {
+      dispatch(actions.newGame(userAttempts, correctAnswer));
     },
     updateBestScore: function(userAttempts) {
       dispatch(actions.updateBestScore(userAttempts));
+    },
+    fetchBestScore: function(bestScore) {
+      dispatch(actions.fetchBestScore());
     }
+
   }
-}
+};
 
 var Container = connect(mapStateToProps, mapDispatchToProps)(NewGame);
 module.exports = Container;

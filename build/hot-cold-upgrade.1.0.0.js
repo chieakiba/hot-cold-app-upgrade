@@ -23095,8 +23095,7 @@
 	  guesses: [],
 	  userAttempts: 0,
 	  feedback: "Make your Guess!",
-	  userGuess: '',
-	  bestScore: 0
+	  userGuess: ''
 	};
 	
 	console.log(initialGameState);
@@ -23172,10 +23171,9 @@
 	};
 	
 	var NEW_GAME = 'NEW_GAME';
-	var newGame = function newGame(bestScore, userAttempts, correctAnswer) {
+	var newGame = function newGame(userAttempts, correctAnswer) {
 	  return {
 	    type: NEW_GAME,
-	    bestScore: bestScore,
 	    userAttempts: userAttempts,
 	    correctAnswer: correctAnswer
 	  };
@@ -23266,7 +23264,7 @@
 	      headers: {
 	        'Content-Type': 'application/json'
 	      },
-	      body: JSON.stringify({ "newBestScore": newBestScore })
+	      body: JSON.stringify({ newBestScore: newBestScore })
 	    }).then(function (res) {
 	      if (res.status < 200 || res.status >= 300) {
 	        var error = new Error(res.statusText);
@@ -23291,6 +23289,7 @@
 	exports.FETCH_BEST_SCORE_ERROR = FETCH_BEST_SCORE_ERROR;
 	exports.fetchBestScoreError = fetchBestScoreError;
 	exports.fetchBestScore = fetchBestScore;
+	exports.fetchBestScoreError = fetchBestScoreError;
 	exports.updateBestScore = updateBestScore;
 	exports.SEND_FEEDBACK = SEND_FEEDBACK;
 	exports.sendFeedback = sendFeedback;
@@ -23850,7 +23849,7 @@
 	  displayName: 'Guess',
 	
 	  componentDidMount: function componentDidMount() {
-	    this.props.dispatch(actions.fetchBestScore(this.props.bestScore));
+	    this.props.dispatch(actions.fetchBestScore());
 	  },
 	  render: function render(props) {
 	    var listOfUserGuesses = this.props.listOfUserGuesses.map(function (listOfUserGuesses) {
@@ -23950,9 +23949,11 @@
 	  displayName: 'NewGame',
 	
 	  onClick: function onClick() {
-	    this.props.newGame(this.props.bestScore, this.props.userAttempts, this.props.correctAnswer);
+	    this.props.newGame(this.props.userAttempts, this.props.correctAnswer);
+	
 	    if (this.props.userAttempts < this.props.bestScore) {
 	      this.props.updateBestScore(this.props.userAttempts);
+	      this.props.fetchBestScore(this.props.bestScore);
 	    }
 	  },
 	  render: function render() {
@@ -23978,12 +23979,16 @@
 	
 	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 	  return {
-	    newGame: function newGame(bestScore, userAttempts, correctAnswer) {
-	      dispatch(actions.newGame(bestScore, userAttempts, correctAnswer));
+	    newGame: function newGame(userAttempts, correctAnswer) {
+	      dispatch(actions.newGame(userAttempts, correctAnswer));
 	    },
 	    updateBestScore: function updateBestScore(userAttempts) {
 	      dispatch(actions.updateBestScore(userAttempts));
+	    },
+	    fetchBestScore: function fetchBestScore(bestScore) {
+	      dispatch(actions.fetchBestScore());
 	    }
+	
 	  };
 	};
 	

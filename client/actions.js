@@ -13,10 +13,9 @@ var onSubmit = function (userGuess, userAttempts, correctAnswer) {
 };
 
 var NEW_GAME = 'NEW_GAME';
-var newGame = function (bestScore, userAttempts, correctAnswer) {
+var newGame = function (userAttempts, correctAnswer) {
   return {
     type: NEW_GAME,
-    bestScore: bestScore,
     userAttempts: userAttempts,
     correctAnswer: correctAnswer
   }
@@ -114,7 +113,7 @@ var updateBestScore = function (newBestScore) {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({"newBestScore": newBestScore})
+      body: JSON.stringify({newBestScore: newBestScore})
     })
     .then(function(res) {
       if (res.status < 200 || res.status >= 300) {
@@ -142,6 +141,7 @@ exports.fetchBestScoreSuccess = fetchBestScoreSuccess;
 exports.FETCH_BEST_SCORE_ERROR = FETCH_BEST_SCORE_ERROR;
 exports.fetchBestScoreError = fetchBestScoreError;
 exports.fetchBestScore = fetchBestScore;
+exports.fetchBestScoreError = fetchBestScoreError;
 exports.updateBestScore = updateBestScore;
 exports.SEND_FEEDBACK = SEND_FEEDBACK;
 exports.sendFeedback = sendFeedback;
