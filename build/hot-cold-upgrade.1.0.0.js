@@ -23107,15 +23107,13 @@
 	
 	  switch (action.type) {
 	    case actions.ON_SUBMIT:
-	      var userGuess = '';
-	      // var feedback = state.feedback;
-	      var bestScore = state.bestScore;
 	      var userAttempts = state.userAttempts + 1;
 	      var listOfUserGuesses = state.guesses.concat(action.userGuess);
-	      action.userGuess = parseInt(action.userGuess);
+	      var userGuess = action.userGuess;
+	      userGuess = parseInt(action.userGuess);
 	
 	      return Object.assign({}, state, {
-	        userGuess: listOfUserGuesses,
+	        guesses: listOfUserGuesses,
 	        userAttempts: userAttempts
 	      });
 	      break;
@@ -23164,19 +23162,22 @@
 	var ON_SUBMIT = 'ON_SUBMIT'; //Actions.js is what I want to happen when a user clicks the components on the page. This doesn't have any logic in it so it won't be able to do anything. It will send that it's been fired up to the reducers and the reducers will change the state.
 	//Action applies the logic
 	
-	var onSubmit = function onSubmit(userGuess, userAttempts) {
+	var onSubmit = function onSubmit(userGuess, userAttempts, correctAnswer) {
 	  return {
 	    type: ON_SUBMIT,
 	    userGuess: userGuess,
-	    userAttempts: userAttempts
+	    userAttempts: userAttempts,
+	    correctAnswer: correctAnswer
 	  };
 	};
 	
 	var NEW_GAME = 'NEW_GAME';
-	var newGame = function newGame(game) {
+	var newGame = function newGame(bestScore, userAttempts, correctAnswer) {
 	  return {
 	    type: NEW_GAME,
-	    game: game
+	    bestScore: bestScore,
+	    userAttempts: userAttempts,
+	    correctAnswer: correctAnswer
 	  };
 	};
 	
@@ -23189,23 +23190,22 @@
 	};
 	
 	var gatherFeedback = function gatherFeedback(userGuess, correctAnswer) {
-	  var distanceFromCorrectAnswer = Math.abs(correctAnswer - userGuess);
 	  if (userGuess == correctAnswer) {
 	    return {
 	      type: SEND_FEEDBACK,
 	      feedback: "You got it right! Play Again?"
 	    };
-	  } else if (distancefromCorrectAnswer <= 10 && distancefromCorrectAnswer >= 1) {
+	  } else if (Math.abs(correctAnswer - userGuess) <= 10 && Math.abs(correctAnswer - userGuess) >= 1) {
 	    return {
 	      type: SEND_FEEDBACK,
 	      feedback: "Hot!"
 	    };
-	  } else if (distancefromCorrectAnswer <= 20 && distancefromCorrectAnswer >= 11) {
+	  } else if (Math.abs(correctAnswer - userGuess) <= 20 && Math.abs(correctAnswer - userGuess) >= 11) {
 	    return {
 	      type: SEND_FEEDBACK,
 	      feedback: "Warmer"
 	    };
-	  } else if (distancefromCorrectAnswer <= 30 && distancefromCorrectAnswer >= 21) {
+	  } else if (Math.abs(correctAnswer - userGuess) <= 30 && Math.abs(correctAnswer - userGuess) >= 21) {
 	    return {
 	      type: SEND_FEEDBACK,
 	      feedback: "Cold"
@@ -23797,7 +23797,7 @@
 	    event.preventDefault();
 	    this.props.gatherFeedback(this.refs.userGuess.value, this.props.correctAnswer);
 	    this.props.onSubmit(this.refs.userGuess.value, this.props.userAttempts);
-	    // this.refs.userGuess.value = '';
+	    this.refs.userGuess.value = '';
 	  },
 	  render: function render() {
 	    return React.createElement(
@@ -23950,10 +23950,9 @@
 	  displayName: 'NewGame',
 	
 	  onClick: function onClick() {
-	    this.props.dispatch(actions.newGame());
-	
+	    this.props.newGame(this.props.bestScore, this.props.userAttempts, this.props.correctAnswer);
 	    if (this.props.userAttempts < this.props.bestScore) {
-	      this.props.dispatch(actions.updateBestScore(this.props.userAttempts));
+	      this.props.updateBestScore(this.props.userAttempts);
 	    }
 	  },
 	  render: function render() {
@@ -23972,11 +23971,23 @@
 	var mapStateToProps = function mapStateToProps(state, props) {
 	  return {
 	    userAttempts: state.userAttempts,
-	    bestScore: state.bestScore
+	    bestScore: state.bestScore,
+	    correctAnswer: state.correctAnswer
 	  };
 	};
 	
-	var Container = connect(mapStateToProps)(NewGame);
+	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+	  return {
+	    newGame: function newGame(bestScore, userAttempts, correctAnswer) {
+	      dispatch(actions.newGame(bestScore, userAttempts, correctAnswer));
+	    },
+	    updateBestScore: function updateBestScore(userAttempts) {
+	      dispatch(actions.updateBestScore(userAttempts));
+	    }
+	  };
+	};
+	
+	var Container = connect(mapStateToProps, mapDispatchToProps)(NewGame);
 	module.exports = Container;
 
 /***/ }

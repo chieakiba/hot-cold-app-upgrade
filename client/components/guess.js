@@ -4,8 +4,7 @@ var actions = require('../actions');
 
 var Guess = React.createClass({
   componentDidMount: function() {
-    this.props.dispatch(
-      actions.fetchBestScore(this.props.bestScore));
+    this.props.dispatch(actions.fetchBestScore(this.props.bestScore));
   },
   render: function (props) {
     var listOfUserGuesses = this.props.listOfUserGuesses.map(function(listOfUserGuesses) {

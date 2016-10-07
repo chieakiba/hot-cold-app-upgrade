@@ -8,7 +8,7 @@ var UserInput = React.createClass({
     event.preventDefault();
     this.props.gatherFeedback(this.refs.userGuess.value, this.props.correctAnswer);
     this.props.onSubmit(this.refs.userGuess.value, this.props.userAttempts);
-    // this.refs.userGuess.value = '';
+    this.refs.userGuess.value = '';
   },
   render: function() {
     return (

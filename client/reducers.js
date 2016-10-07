@@ -15,15 +15,13 @@ console.log(initialGameState);
 var gameReducer = function(state = initialGameState, action) {
   switch(action.type) {
     case actions.ON_SUBMIT:
-      var userGuess = '';
-      // var feedback = state.feedback;
-      var bestScore = state.bestScore;
       var userAttempts = state.userAttempts + 1;
       var listOfUserGuesses = state.guesses.concat(action.userGuess);
-      action.userGuess = parseInt(action.userGuess);
+      var userGuess = action.userGuess;
+      userGuess = parseInt(action.userGuess);
 
       return Object.assign({}, state, {
-        userGuess: listOfUserGuesses,
+        guesses: listOfUserGuesses,
         userAttempts: userAttempts,
       });
     break;

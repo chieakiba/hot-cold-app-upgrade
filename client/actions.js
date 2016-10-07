@@ -3,19 +3,22 @@
 import fetch from 'isomorphic-fetch';
 
 var ON_SUBMIT = 'ON_SUBMIT';
-var onSubmit = function (userGuess, userAttempts) {
+var onSubmit = function (userGuess, userAttempts, correctAnswer) {
   return {
     type: ON_SUBMIT,
     userGuess: userGuess,
-    userAttempts: userAttempts
+    userAttempts: userAttempts,
+    correctAnswer: correctAnswer
   }
 };
 
 var NEW_GAME = 'NEW_GAME';
-var newGame = function (game) {
+var newGame = function (bestScore, userAttempts, correctAnswer) {
   return {
     type: NEW_GAME,
-    game: game
+    bestScore: bestScore,
+    userAttempts: userAttempts,
+    correctAnswer: correctAnswer
   }
 };
 
@@ -28,26 +31,25 @@ var sendFeedback = function (feedback) {
 };
 
 var gatherFeedback = function (userGuess, correctAnswer) {
-    var distanceFromCorrectAnswer = Math.abs(correctAnswer - userGuess);
     if (userGuess == correctAnswer) {
       return {
         type: SEND_FEEDBACK,
         feedback: "You got it right! Play Again?"
       }
     }
-    else if (distancefromCorrectAnswer <= 10 && distancefromCorrectAnswer >= 1) {
+    else if (Math.abs(correctAnswer - userGuess) <= 10 && Math.abs(correctAnswer - userGuess) >= 1) {
       return {
         type: SEND_FEEDBACK,
         feedback: "Hot!"
       }
     }
-    else if (distancefromCorrectAnswer <= 20 && distancefromCorrectAnswer >= 11) {
+    else if (Math.abs(correctAnswer - userGuess) <= 20 && Math.abs(correctAnswer - userGuess) >= 11) {
       return {
         type: SEND_FEEDBACK,
         feedback: "Warmer"
       }
     }
-    else if (distancefromCorrectAnswer <= 30 && distancefromCorrectAnswer >= 21) {
+    else if (Math.abs(correctAnswer - userGuess) <= 30 && Math.abs(correctAnswer - userGuess) >= 21) {
       return {
         type: SEND_FEEDBACK,
         feedback: "Cold"
