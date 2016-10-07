@@ -23988,7 +23988,6 @@
 	    fetchBestScore: function fetchBestScore(bestScore) {
 	      dispatch(actions.fetchBestScore());
 	    }
-	
 	  };
 	};
 	

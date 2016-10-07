@@ -40,7 +40,6 @@ var mapDispatchToProps = function (dispatch) {
     fetchBestScore: function(bestScore) {
       dispatch(actions.fetchBestScore());
     }
-
   }
 };
 
