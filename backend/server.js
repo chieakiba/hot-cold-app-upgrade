@@ -9,6 +9,7 @@ app.use(express.static('build'));
 var Guesses = require('./models/guesses');
 var bestScore;
 
+//Gets the best score
 app.get('/fewest-guesses', function (req, res) {
   Guesses.find(function (err, bestScore) {
     if (err) {
@@ -20,6 +21,7 @@ app.get('/fewest-guesses', function (req, res) {
   });
 });
 
+//Once the user gets the correct random number and if the number of guesses it took that person is less than the previous, the best score will update to the new best score
 app.post('/update-best-score', function (req, res) {
   Guesses.update({
     bestScore: req.body.newBestScore

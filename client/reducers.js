@@ -1,4 +1,3 @@
-//Reducers change the states
 var actions = require('./actions');
 
 var initialGameState = {
@@ -14,6 +13,7 @@ console.log(initialGameState);
 var gameReducer = function(state = initialGameState, action) {
   switch(action.type) {
     case actions.ON_SUBMIT:
+      //Shows the user the list of guesses they attempted/entered and adds 1 to the counter to count how many guesses have been entered
       var userAttempts = state.userAttempts + 1;
       var listOfUserGuesses = state.guesses.concat(action.userGuess);
       var userGuess = action.userGuess;

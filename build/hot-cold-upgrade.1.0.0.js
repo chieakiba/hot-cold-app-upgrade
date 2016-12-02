@@ -23087,7 +23087,6 @@
 
 	'use strict';
 	
-	//Reducers change the states
 	var actions = __webpack_require__(199);
 	
 	var initialGameState = {
@@ -23106,6 +23105,7 @@
 	
 	  switch (action.type) {
 	    case actions.ON_SUBMIT:
+	      //Shows the user the list of guesses they attempted/entered and adds 1 to the counter to count how many guesses have been entered
 	      var userAttempts = state.userAttempts + 1;
 	      var listOfUserGuesses = state.guesses.concat(action.userGuess);
 	      var userGuess = action.userGuess;
@@ -23158,9 +23158,7 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var ON_SUBMIT = 'ON_SUBMIT'; //Actions.js is what I want to happen when a user clicks the components on the page. This doesn't have any logic in it so it won't be able to do anything. It will send that it's been fired up to the reducers and the reducers will change the state.
-	//Action applies the logic
-	
+	var ON_SUBMIT = 'ON_SUBMIT';
 	var onSubmit = function onSubmit(userGuess, userAttempts, correctAnswer) {
 	  return {
 	    type: ON_SUBMIT,
@@ -23187,6 +23185,7 @@
 	  };
 	};
 	
+	//Checks to see how close or far the user's guess is to the correct answer
 	var gatherFeedback = function gatherFeedback(userGuess, correctAnswer) {
 	  if (userGuess == correctAnswer) {
 	    return {

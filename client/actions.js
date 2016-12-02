@@ -1,5 +1,3 @@
-//Actions.js is what I want to happen when a user clicks the components on the page. This doesn't have any logic in it so it won't be able to do anything. It will send that it's been fired up to the reducers and the reducers will change the state.
-//Action applies the logic
 import fetch from 'isomorphic-fetch';
 
 var ON_SUBMIT = 'ON_SUBMIT';
@@ -29,6 +27,7 @@ var sendFeedback = function (feedback) {
   }
 };
 
+//Checks to see how close or far the user's guess is to the correct answer
 var gatherFeedback = function (userGuess, correctAnswer) {
     if (userGuess == correctAnswer) {
       return {
